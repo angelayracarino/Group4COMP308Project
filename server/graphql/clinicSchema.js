@@ -342,14 +342,14 @@ const mutation = new GraphQLObjectType({
           try {
             const updateVital = Vital.findByIdAndUpdate(
               params.id, {
-                $set: {
-                  bodyTemperature: params.bodyTemperature,
-                  heartRate: params.heartRate,
-                  bloodPressure: params.bloodPressure,
-                  respiratoryRate: params.respiratoryRate,
-                  pulseRate: params.pulseRate,
-                  date: params.date
-                }
+              $set: {
+                bodyTemperature: params.bodyTemperature,
+                heartRate: params.heartRate,
+                bloodPressure: params.bloodPressure,
+                respiratoryRate: params.respiratoryRate,
+                pulseRate: params.pulseRate,
+                date: params.date
+              }
             }, { new: true }).exec();
             if (!updateVital) {
               throw new Error('Error')
@@ -361,6 +361,7 @@ const mutation = new GraphQLObjectType({
         }
       },
     }
+  }
 });
 //
 module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });
