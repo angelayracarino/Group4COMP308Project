@@ -73,6 +73,35 @@ const userType = new GraphQLObjectType({
 });
 //
 
+vitalType = new GraphQLObjectType({
+  name: 'vital',
+  fields: function () {
+    return {
+      _id: {
+        type: GraphQLID
+      },
+      bodyTemperature: {
+        type: GraphQLString
+      },
+      heartRate: {
+        type: GraphQLString
+      },
+      bloodPressure: {
+        type: GraphQLString
+      },
+      respiratoryRate: {
+        type: GraphQLString
+      },
+      pulseRate: {
+        type: GraphQLString
+      },
+      date: {
+        type: GraphQLDate
+      }
+    }
+  }
+});
+
 // Create a GraphQL query type that returns a student by id
 // In this case, the queries are defined within the fields object.
 // The fields object is a required property of a GraphQLObjectType 
@@ -263,6 +292,8 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          time: { type: GraphQLNonNull(GraphQLString) },
+          patient: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
           const vitalModel = new Vital(params);
@@ -283,6 +314,7 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          
         },
         resolve: function (root, params, context) {
           try {
