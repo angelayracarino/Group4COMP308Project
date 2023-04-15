@@ -145,6 +145,24 @@ const alertType = new GraphQLObjectType({
   }
 });
 
+const symptomsType = new GraphQLObjectType({
+  name: 'symptoms',
+  fields: function () {
+    return {
+      _id: {
+        type: GraphQLNonNull(GraphQLID)
+      },
+      symptom: {
+        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))
+      },
+      date: {
+        type: GraphQLNonNull(GraphQLDate)
+      },
+    }
+  }
+});
+
+
 
 
 // Create a GraphQL query type that returns a student by id
@@ -188,6 +206,25 @@ const queryType = new GraphQLObjectType({
       },
       tip: {
         type: tipType,
+        args: {
+          id: {
+            name: '_id',
+            type: GraphQLString
+          }
+        }
+      },
+      symptoms: {
+        type: new GraphQLList(symptomsType),
+        resolve: function () {
+          const symptoms = SymptomsModel.find().exec()
+          if (!symptoms) {
+            throw new Error('Error')
+          }
+          return symptoms
+        }
+      },
+      symptom: {
+        type: symptomsType,
         args: {
           id: {
             name: '_id',
@@ -533,6 +570,21 @@ const mutation = new GraphQLObjectType({
             throw new Error('Error');
           }
           return newAlert
+        }
+      },
+      createSymptoms: {
+        type: symptomsType,
+        args: {
+          symptoms: { type: GraphQLNonNull(GraphQLString) },
+          date: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          const symptomsModel = new Symptoms(params);
+          const newSymptoms = symptomsModel.save();
+          if (!newSymptoms) {
+            throw new Error('Error');
+          }
+          return newSymptoms
         }
       },
     }
