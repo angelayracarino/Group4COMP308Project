@@ -145,7 +145,10 @@ const alertType = new GraphQLObjectType({
   }
 });
 
+<<<<<<< Updated upstream
 //Create symptoms object type
+=======
+>>>>>>> Stashed changes
 const symptomsType = new GraphQLObjectType({
   name: 'symptoms',
   fields: function () {
@@ -153,16 +156,25 @@ const symptomsType = new GraphQLObjectType({
       _id: {
         type: GraphQLNonNull(GraphQLID)
       },
+<<<<<<< Updated upstream
       selectedSymptoms  : {
         type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))
       },
 
+=======
+      selectedSymptoms: {
+        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))
+      },
+>>>>>>> Stashed changes
     }
   }
 });
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 
 // Create a GraphQL query type that returns a student by id
