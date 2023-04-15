@@ -97,6 +97,12 @@ vitalType = new GraphQLObjectType({
       },
       date: {
         type: GraphQLDate
+      },
+      time: {
+        type: GraphQLString
+      },
+      patient: {
+        type: GraphQLString
       }
     }
   }
@@ -302,7 +308,58 @@ const mutation = new GraphQLObjectType({
         },
       },
       //
-      }
+      createVital: {
+        type: vitalType,
+        args: {
+          bodyTemperature: { type: GraphQLNonNull(GraphQLString) },
+          heartRate: { type: GraphQLNonNull(GraphQLString) },
+          bloodPressure: { type: GraphQLNonNull(GraphQLString) },
+          respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
+          pulseRate: { type: GraphQLNonNull(GraphQLString) },
+          date: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          const vitalModel = new Vital(params);
+          const newVital = vitalModel.save();
+          if (!newVital) {
+            throw new Error('Error');
+          }
+          return newVital
+        }
+      },
+      updateVital: {
+        type: vitalType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLString) },
+          bodyTemperature: { type: GraphQLNonNull(GraphQLString) },
+          heartRate: { type: GraphQLNonNull(GraphQLString) },
+          bloodPressure: { type: GraphQLNonNull(GraphQLString) },
+          respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
+          pulseRate: { type: GraphQLNonNull(GraphQLString) },
+          date: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          try {
+            const updateVital = Vital.findByIdAndUpdate(
+              params.id, {
+                $set: {
+                  bodyTemperature: params.bodyTemperature,
+                  heartRate: params.heartRate,
+                  bloodPressure: params.bloodPressure,
+                  respiratoryRate: params.respiratoryRate,
+                  pulseRate: params.pulseRate,
+                  date: params.date
+                }
+            }, { new: true }).exec();
+            if (!updateVital) {
+              throw new Error('Error')
+            }
+            return updateVital;
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      },
     }
 });
 //
