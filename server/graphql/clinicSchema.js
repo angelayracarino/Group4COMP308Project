@@ -32,46 +32,75 @@ const jwtExpirySeconds = 1000;
 // and it defines the different fields or query/mutations that are available
 // in this type.
 const userType = new GraphQLObjectType({
-    name: 'user',
-    fields: function () {
-      return {
-        _id: {
-          type: GraphQLID
-        },
-        firstName: {
-          type: GraphQLString
-        },
-        lastName: {
-          type: GraphQLString
-        },
-        email: {
-          type: GraphQLString
-        },
-        password: {
-          type: GraphQLString
-        },
-        address: {
-          type: GraphQLString
-        },
-        city: {
-          type: GraphQLString
-        },
-        province: {
-          type: GraphQLString
-        },
-        postalcode: {
-            type: GraphQLString
-        },
-        phone: {
-          type: GraphQLString
-        },
-        role:{
-            type: GraphQLString
-        }
+  name: 'user',
+  fields: function () {
+    return {
+      _id: {
+        type: GraphQLID
+      },
+      firstName: {
+        type: GraphQLString
+      },
+      lastName: {
+        type: GraphQLString
+      },
+      email: {
+        type: GraphQLString
+      },
+      password: {
+        type: GraphQLString
+      },
+      address: {
+        type: GraphQLString
+      },
+      city: {
+        type: GraphQLString
+      },
+      province: {
+        type: GraphQLString
+      },
+      postalcode: {
+        type: GraphQLString
+      },
+      phone: {
+        type: GraphQLString
+      },
+      role: {
+        type: GraphQLString
       }
     }
-  });
-  //
+  }
+});
+//
+
+const vitalType = new GraphQLObjectType({
+  name: 'vital',
+  fields: function () {
+    return {
+      _id: {
+        type: GraphQLID
+      },
+      bodyTemperature: {
+        type: GraphQLString
+      },
+      heartRate: {
+        type: GraphQLString
+      },
+      bloodPressure: {
+        type: GraphQLString
+      },
+      respiratoryRate: {
+        type: GraphQLString
+      },
+      pulseRate: {
+        type: GraphQLString
+      },
+      date: {
+        type: GraphQLDate
+      }
+    }
+  }
+});
 
 // Create a GraphQL query type that returns a student by id
 // In this case, the queries are defined within the fields object.
@@ -80,10 +109,27 @@ const userType = new GraphQLObjectType({
 // in this type. 
 //
 const queryType = new GraphQLObjectType({
-    name: 'Query',
-    fields: function () {
-      return {
-        users: {
+  name: 'Query',
+  fields: function () {
+    return {
+      vitals: {
+        type: new GraphQLList(vitalType),
+        resolve: function () {
+          const vitals = VitalModel.find().exec()
+          if (!vitals) {
+            throw new Error('Error')
+          }
+          return vitals
+        },
+        vital: {
+          type: vitalType,
+          args: {
+            id: {
+              name: '_id',
+              type: GraphQLString
+            }
+          },
+          users: {
             type: new GraphQLList(userType),
             resolve: function () {
               const users = User.find().exec()
@@ -117,7 +163,7 @@ const queryType = new GraphQLObjectType({
                 name: 'email',
                 type: GraphQLString
               }
-    
+
             },
             resolve: function (root, params, context) {
               //
@@ -157,11 +203,13 @@ const queryType = new GraphQLObjectType({
               // Finally, token is ok, return the email given in the token
               // res.status(200).send({ screen: payload.email });
               return payload.email;
-    
+
             }
           },
+        }
       }
     }
+  }
 });
 
 // Add a mutation for creating user
