@@ -73,7 +73,7 @@ const userType = new GraphQLObjectType({
 });
 //
 
-vitalType = new GraphQLObjectType({
+const vitalType = new GraphQLObjectType({
   name: 'vital',
   fields: function () {
     return {
