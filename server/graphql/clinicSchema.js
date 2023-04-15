@@ -122,20 +122,10 @@ const queryType = new GraphQLObjectType({
               return users
             }
           },
-          user: {
-            type: userType,
-            args: {
-              id: {
-                name: '_id',
-                type: GraphQLString
-              }
-            },
-            resolve: function (root, params) {
-              const userInfo = User.findById(params.id).exec()
-              if (!userInfo) {
-                throw new Error('Error')
-              }
-              return userInfo
+          resolve: function (root, params) {
+            const userInfo = User.findById(params.id).exec()
+            if (!userInfo) {
+              throw new Error('Error')
             }
           },
           // check if user is logged in
@@ -188,6 +178,7 @@ const queryType = new GraphQLObjectType({
               return payload.email;
     
             }
+
           },
       }
     }
