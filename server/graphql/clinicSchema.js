@@ -108,6 +108,45 @@ const vitalType = new GraphQLObjectType({
   }
 });
 
+const tipType = new GraphQLObjectType({
+  name: 'tip',
+  fields: function () {
+    return {
+      _id: {
+        type: GraphQLID
+      },
+      title: {
+        type: GraphQLString
+      },
+      description: {
+        type: GraphQLString
+      }
+    }
+  }
+});
+
+const alertType = new GraphQLObjectType({
+  name: 'alert',
+  fields: function () {
+    return {
+      _id: {
+        type: GraphQLID
+      },
+      responderName: {
+        type: GraphQLString
+      },
+      email: {
+        type: GraphQLString
+      },
+      phoneNumber: {
+        type: GraphQLString
+      },
+    }
+  }
+});
+
+
+
 // Create a GraphQL query type that returns a student by id
 // In this case, the queries are defined within the fields object.
 // The fields object is a required property of a GraphQLObjectType 
@@ -118,6 +157,44 @@ const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: function () {
     return {
+      alerts: {
+        type: new GraphQLList(alertType),
+        resolve: function () {
+          const alerts = AlertModel.find().exec()
+          if (!alerts) {
+            throw new Error('Error')
+          }
+          return alerts
+        }
+      },
+      alert: {
+        type: alertType,
+        args: {
+          id: {
+            name: '_id',
+            type: GraphQLString
+          }
+        },
+      },
+      tips: {
+        type: new GraphQLList(tipType),
+        resolve: function () {
+          const tips = TipsModel.find().exec()
+          if (!tips) {
+            throw new Error('Error')
+          }
+          return tips
+        }
+      },
+      tip: {
+        type: tipType,
+        args: {
+          id: {
+            name: '_id',
+            type: GraphQLString
+          }
+        }
+      },
       vitals: {
         type: new GraphQLList(vitalType),
         resolve: function () {
@@ -358,6 +435,62 @@ const mutation = new GraphQLObjectType({
           } catch (err) {
             console.log(err)
           }
+        }
+      },
+      createTips: {
+        type: tipsType,
+        args: {
+          title: { type: GraphQLNonNull(GraphQLString) },
+          description: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          const tipsModel = new Tips(params);
+          const newTips = tipsModel.save();
+          if (!newTips) {
+            throw new Error('Error');
+          }
+          return newTips
+        }
+      },
+      updateTips: {
+        type: tipsType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLString) },
+          title: { type: GraphQLNonNull(GraphQLString) },
+          description: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          try {
+            const updateTips = Tips.findByIdAndUpdate(
+              params.id, {
+              $set: {
+                title: params.title,
+                description: params.description,
+              }
+            }, { new: true }).exec();
+            if (!updateTips) {
+              throw new Error('Error')
+            }
+            return updateTips;
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      },
+      createAlert: {
+        type: alertType,
+        args: {
+          responderName: { type: GraphQLNonNull(GraphQLString) },
+          email: { type: GraphQLNonNull(GraphQLString) },
+          phoneNumber: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          const alertModel = new Alert(params);
+          const newAlert = alertModel.save();
+          if (!newAlert) {
+            throw new Error('Error');
+          }
+          return newAlert
         }
       },
     }
