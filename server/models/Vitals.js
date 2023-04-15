@@ -26,6 +26,14 @@ const VitalsSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    time: {
+        type: String,
+        required: true
+    },
+    patient: {
+        type: String,
+        ref: 'User'
     }
 });
 
