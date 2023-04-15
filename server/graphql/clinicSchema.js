@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 //
 // A GraphQL schema that defines types, queries and mutations
 //
@@ -552,4 +550,3 @@ const mutation = new GraphQLObjectType({
 });
 //
 module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });
->>>>>>> Stashed changes
