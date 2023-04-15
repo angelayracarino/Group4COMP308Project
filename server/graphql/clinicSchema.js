@@ -97,6 +97,12 @@ vitalType = new GraphQLObjectType({
       },
       date: {
         type: GraphQLDate
+      },
+      time: {
+        type: GraphQLString
+      },
+      patient: {
+        type: GraphQLString
       }
     }
   }
@@ -311,6 +317,8 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          time: { type: GraphQLNonNull(GraphQLString) },
+          patient: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
           const vitalModel = new Vital(params);
@@ -331,6 +339,7 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          
         },
         resolve: function (root, params, context) {
           try {
