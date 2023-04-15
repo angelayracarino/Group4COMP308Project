@@ -304,7 +304,7 @@ const queryType = new GraphQLObjectType({
               }
               var payload;
               try {
-                // Parse the JWT string and store the result in `payload`.
+                // Parse the JWT string and store the result in payload.
                 // Note that we are passing the key in this method as well. 
                 // This method will throw an error
                 // if the token is invalid (if it has expired according to the expiry time
@@ -329,49 +329,8 @@ const queryType = new GraphQLObjectType({
     
             }
           },
-            checkUserRole: {
-                type: GraphQLString,
-                resolve: async function (root, params, context) {
-                    const token = context.req.cookies.token;
-                    if (!token) {
-                        return 'auth';
-                    }
-                    try {
-                        const payload = jwt.verify(token, JWT_SECRET);
-                        const user = await User.findOne({ email: payload.email });
-                        return user.role;
-                    } catch (err) {
-                        console.error(err);
-                        return 'auth';
-                    }
-                }
-            },
-            redirectToPage: {
-                type: GraphQLString,
-                resolve: async function (root, params, context) {
-                    const token = context.req.cookies.token;
-                    if (!token) {
-                        return 'auth';
-                    }
-                    try {
-                        const payload = jwt.verify(token, JWT_SECRET);
-                        const user = await UserModel.findOne({ email: payload.email });
-                        if (user.role === 'patient') {
-                            return '/patient-page';
-                        } else if (user.role === 'nurse') {
-                            return '/nurse-page';
-                        } else {
-                            return '/login';
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        return 'auth';
-                    }
-                }
-            }
-        }
+      }
     }
-  }
 });
 
 // Add a mutation for creating user
@@ -605,4 +564,3 @@ const mutation = new GraphQLObjectType({
 });
 //
 module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });
-

@@ -1,0 +1,12 @@
+@media all and (min-width: 480px) {
+    .entryform {
+      padding: 10px 0;
+    }
+  
+    .entryform form {
+      margin: 20px auto;
+      max-width: 600px;
+      border: 1px solid #ccc;
+      padding: 50px;
+    }
+  }
