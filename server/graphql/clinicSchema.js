@@ -214,3 +214,96 @@ const queryType = new GraphQLObjectType({
 
 // Add a mutation for creating user
 // In this case, the createUser mutation is defined within the fields object.
+const mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: function () {
+      return {
+        createUser: {
+            type: userType,
+            args: {
+              firstName: { type: GraphQLNonNull(GraphQLString) },
+              lastName: { type: GraphQLNonNull(GraphQLString) },
+              email: { type: GraphQLNonNull(GraphQLString) },
+              password: { type: GraphQLNonNull(GraphQLString) },
+              address: { type: GraphQLNonNull(GraphQLString) },
+              city: { type: GraphQLNonNull(GraphQLString) },
+              province: { type: GraphQLNonNull(GraphQLString) },
+              postalcode: { type: GraphQLNonNull(GraphQLString) },
+              phone: { type: GraphQLNonNull(GraphQLString) },
+              role: { type: GraphQLNonNull(GraphQLString) },
+            },
+            resolve: function (root, params, context) {
+              const userModel = new User(params);
+              const newUser = userModel.save();
+              if (!newUser) {
+                throw new Error('Error');
+              }
+              return newUser
+            }
+          },
+
+          // a mutation to log in the student
+      loginUser: 
+      {
+        type: GraphQLString,
+        args: {
+          email: {
+            name: 'email',
+            type: GraphQLString
+          },
+          password: {
+            name: 'password',
+            type: GraphQLString
+          }
+        },
+
+        resolve: async function (root, params, context) {
+          console.log('email:', params.email)
+          // find the student with email if exists
+          const userInfo = await User.findOne({ email: params.email }).exec()
+          console.log(userInfo)
+          if (!userInfo) {
+            throw new Error('Error - student not found')
+          }
+          console.log('email:', userInfo.email)
+          console.log('entered pass: ', params.password)
+          console.log('hash', userInfo.password)
+          // check if the password is correct
+          const isValidPassword = await bcrypt.compare(params.password, userInfo.password);
+          if (!isValidPassword) {
+            return 'auth';
+            //throw new Error('Invalid login credentials');
+          }
+          console.log('password is valid')
+          console.log('password matches')
+          console.log('email:', userInfo.email)
+          console.log('Object id of user:', userInfo._id);
+          // sign the given payload (arguments of sign method) into a JSON Web Token 
+          // and which expires 300 seconds after issue
+          const token = jwt.sign({ _id: userInfo._id, email: userInfo.email }, JWT_SECRET,
+            { algorithm: 'HS256', expiresIn: jwtExpirySeconds });
+          console.log('registered token:', token)
+
+          // set the cookie as the token string, with a similar max age as the token
+          // here, the max age is in milliseconds
+          context.res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000, httpOnly: true });
+          console.log('cookie set with:', userInfo.email)
+          //context.res.status(200).send({ screen: userInfo.firstname });
+          return userInfo.email;
+
+        } //end of resolver function
+      },
+      // a mutation to log the student out
+      logOut: {
+        type: GraphQLString,
+        resolve: (parent, args, { res }) => {
+          res.clearCookie('token');
+          return 'Logged out successfully!';
+        },
+      },
+      //
+      }
+    }
+});
+//
+module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });
