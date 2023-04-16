@@ -329,7 +329,47 @@ const queryType = new GraphQLObjectType({
     
             }
           },
-      }
+            checkUserRole: {
+                type: GraphQLString,
+                resolve: async function (root, params, context) {
+                    const token = context.req.cookies.token;
+                    if (!token) {
+                        return 'auth';
+                    }
+                    try {
+                        const payload = jwt.verify(token, JWT_SECRET);
+                        const user = await User.findOne({ email: payload.email });
+                        return user.role;
+                    } catch (err) {
+                        console.error(err);
+                        return 'auth';
+                    }
+                }
+            },
+            redirectToPage: {
+                type: GraphQLString,
+                resolve: async function (root, params, context) {
+                    const token = context.req.cookies.token;
+                    if (!token) {
+                        return 'auth';
+                    }
+                    try {
+                        const payload = jwt.verify(token, JWT_SECRET);
+                        const user = await UserModel.findOne({ email: payload.email });
+                        if (user.role === 'patient') {
+                            return '/patient-page';
+                        } else if (user.role === 'nurse') {
+                            return '/nurse-page';
+                        } else {
+                            return '/login';
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        return 'auth';
+                    }
+                }
+            }
+        }
     }
 });
 
