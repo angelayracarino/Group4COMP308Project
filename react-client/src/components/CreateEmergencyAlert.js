@@ -6,6 +6,22 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { withRouter } from 'react-router-dom';
 
+const ADD_ALERT = gql`
+  mutation AddAlert(
+    $patient: String!
+    $situation: String!
+    $contactNumber: String!
+  ) {
+    addAlert(
+      patient: $patient
+      situation: $situation
+      contactNumber: $contactNumber
+    ) {
+      _id
+    }
+  }
+`;
+
 function CreateEmergencyAlert(props) {
   const [emergency, setEmergency] = useState({ _id: '', emergencyCode: '', emergencySubject: '', 
   description: '', contactName: '', contactNumber: '', status: ''});
