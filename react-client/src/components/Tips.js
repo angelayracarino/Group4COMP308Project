@@ -1,73 +1,103 @@
 //Imports
-import React from 'react';
+import React, { useState } from 'react';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 import { gql, useMutation } from '@apollo/client';
-import Spinner from 'react-bootstrap/Spinner';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-//
-import { useNavigate } from 'react-router-dom';
 
-//Create gql for Tips
+//Create a gql for Tips
 
 const CREATE_TIPS = gql`
-    mutation createTips(
+    mutation createTip(
         $title: String!
         $description: String!
-    }
+    
     ) {
-        createTips(
+        createTip(
             title: $title
             description: $description
+        ) {
+            title
+            description
         }
-    ) {
-        _id
-        title
-        description
     }
 `;
 
-//Create a function to create a new tip
-const createTips = () => {
+//Create a component for Tips
+const CreateTip = () => {
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
 
-    let navigate = useNavigate();
-    
-    let title, description;
-    const [createTips, { data, loading, error}] = useMutation(CREATE_TIPS);
+    const clearState = () => {
+        setTitle('');
+        setDescription('');
+    };
 
-    if (loading) return 'Submitting...';
-    if (error) return `Submission error! ${error.message}`;
+    const [createTip, { loading }] = useMutation(CREATE_TIPS);
 
+    const handleSubmit = (event) => {
+        e.preventDefault();
+        if(
+            title === '' ||
+            description === ''
+        ) {
+            toast.error('Please fill out all fields');
+        } else {
+            createTip({
+                variables: {
+                    title: title,
+                    description: description
+                }
+            }).then(() => {
+                toast.success('Tips added successfully');
+                clearState();
+            }).catch((error) => {
+                toast.error(error.message);
+            });
+        }
+    };
+
+    if (loading)
+        return (
+            <Container className='my-3 py-3'>
+                <p>Submitting...</p>
+            </Container>
+        );
+        
     return (
-        <div className="entryform">
-            <form
-                onSubmit={e => {
-                    e.preventDefault();
-                    createTips({ variables: { title : title.value, description : description.value } });
-
-                    title.value = '';
-                    description.value = '';
-
-                    navigate('/tips');
-                }}
-            >
-            
-            <FormGroup>
-                <Form.Label>Title</Form.Label>
-                <Form.Control type="text" ref={node => { title = node; }} />
-            </FormGroup>
-
-            <FormGroup>
-                <Form.Label>Description</Form.Label>
-                <Form.Control type="text" ref={node => { description = node; }} />
-            </FormGroup>
-
-            <Button variant="primary" type="submit">Submit</Button>
-            </form>
-        </div>
+        <div>
+                <Container className='my-3 py-3'>
+                    <Row>
+                    <Col md={{ span: 4, offset: 4 }} className='p-4 custom-shadow' style={{background:"lightGrey"}}>
+						<h4 className='text-center'>Add Vitals</h4>
+                        <Form className='my-3' onSubmit={handlesubmit} id='courseform'>
+                            <Form.Group className='mb-3'>
+                                <Form.Label>Title</Form.Label>
+                                <Form.Control
+                                    type='text'
+                                    placeholder='Enter title'
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Form.Group className='mb-3'>
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control
+                                    type='text'
+                                    placeholder='Enter description'
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                />
+                            </Form.Group>
+                            <Button variant='primary' type='submit'>
+                                Submit
+                            </Button>
+                        </Form>
+                    </Col>
+                    </Row>
+                </Container>
+            </div>
     );
 };
 
-export default createTips;
-
-
-            
+export default CreateTip;
+                    
