@@ -10,10 +10,10 @@ module.exports = function() {
 		console.log('Error in db connection', err);
 		});
 
-	// Load the 'Student' model 
-	require('../models/Student');
-	// Load the 'Course' model 
-	require('../models/Course');
+	// Load the 'User' model 
+	require('../models/User');
+	// Load the 'Alert' model 
+	//require('../models/Alert');
 
 	// Return the Mongoose connection instance
 	return db;

@@ -251,125 +251,125 @@ const queryType = new GraphQLObjectType({
           }
         },
         users: {
-            type: new GraphQLList(userType),
-            resolve: function () {
-              const users = User.find().exec()
-              if (!users) {
-                throw new Error('Error')
-              }
-              return users
+          type: new GraphQLList(userType),
+          resolve: function () {
+            const users = User.find().exec()
+            if (!users) {
+              throw new Error('Error')
+            }
+            return users
+          }
+        },
+        user: {
+          type: userType,
+          args: {
+            id: {
+              name: '_id',
+              type: GraphQLString
             }
           },
-          user: {
-            type: userType,
-            args: {
-              id: {
-                name: '_id',
-                type: GraphQLString
-              }
-            },
-            resolve: function (root, params) {
-              const userInfo = User.findById(params.id).exec()
-              if (!userInfo) {
-                throw new Error('Error')
-              }
-              return userInfo
+          resolve: function (root, params) {
+            const userInfo = User.findById(params.id).exec()
+            if (!userInfo) {
+              throw new Error('Error')
             }
+            return userInfo
+          }
+        },
+        // check if user is logged in
+        isLoggedIn: {
+          type: GraphQLString,
+          args: {
+            email: {
+              name: 'email',
+              type: GraphQLString
+            }
+
           },
-          // check if user is logged in
-          isLoggedIn: {
-            type: GraphQLString,
-            args: {
-              email: {
-                name: 'email',
-                type: GraphQLString
-              }
-    
-            },
-            resolve: async function (root, params, context) {
-              //
-              console.log(params)
-              console.log('in isLoggedIn.....')
-              console.log(context.req.cookies['token'])
-              console.log('token: ')
-              //
-              // Obtain the session token from the requests cookies,
-              // which come with every request
-              const token = context.req.cookies.token
-              console.log('token from request: ', token)
-              // if the cookie is not set, return 'auth'
-              if (!token) {
-                console.log('no token, so return auth')
-                return 'auth';
-              }
-              var payload;
-              try {
-                // Parse the JWT string and store the result in `payload`.
-                // Note that we are passing the key in this method as well. 
-                // This method will throw an error
-                // if the token is invalid (if it has expired according to the expiry time
-                //  we set on sign in), or if the signature does not match
-                const payload = jwt.verify(token, JWT_SECRET)
-                const user = await User.findOne({ email: payload.email });
-                return user.role;
-              } catch (e) {
-                if (e instanceof jwt.JsonWebTokenError) {
-                  // the JWT is unauthorized, return a 401 error
-                  console.log('jwt error')
-                  return context.res.status(401).end()
-                }
-                // otherwise, return a bad request error
-                console.log('bad request error')
-                return context.res.status(400).end()
-              }
-              console.log('email from payload: ', payload.email)
-              // Finally, token is ok, return the email given in the token
-              // res.status(200).send({ screen: payload.email });
-              return payload.email;
-    
+          resolve: async function (root, params, context) {
+            //
+            console.log(params)
+            console.log('in isLoggedIn.....')
+            console.log(context.req.cookies['token'])
+            console.log('token: ')
+            //
+            // Obtain the session token from the requests cookies,
+            // which come with every request
+            const token = context.req.cookies.token
+            console.log('token from request: ', token)
+            // if the cookie is not set, return 'auth'
+            if (!token) {
+              console.log('no token, so return auth')
+              return 'auth';
             }
-          },
-            checkUserRole: {
-                type: GraphQLString,
-                resolve: async function (root, params, context) {
-                    const token = context.req.cookies.token;
-                    if (!token) {
-                        return 'auth';
-                    }
-                    try {
-                        const payload = jwt.verify(token, JWT_SECRET);
-                        const user = await User.findOne({ email: payload.email });
-                        return user.role;
-                    } catch (err) {
-                        console.error(err);
-                        return 'auth';
-                    }
-                }
-            },
-            redirectToPage: {
-                type: GraphQLString,
-                resolve: async function (root, params, context) {
-                    const token = context.req.cookies.token;
-                    if (!token) {
-                        return 'auth';
-                    }
-                    try {
-                        const payload = jwt.verify(token, JWT_SECRET);
-                        const user = await UserModel.findOne({ email: payload.email });
-                        if (user.role === 'patient') {
-                            return '/patient-page';
-                        } else if (user.role === 'nurse') {
-                            return '/nurse-page';
-                        } else {
-                            return '/login';
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        return 'auth';
-                    }
-                }
+            var payload;
+            try {
+              // Parse the JWT string and store the result in payload.
+              // Note that we are passing the key in this method as well. 
+              // This method will throw an error
+              // if the token is invalid (if it has expired according to the expiry time
+              //  we set on sign in), or if the signature does not match
+              const payload = jwt.verify(token, JWT_SECRET)
+              const user = await User.findOne({ email: payload.email });
+              return user.role;
+            } catch (e) {
+              if (e instanceof jwt.JsonWebTokenError) {
+                // the JWT is unauthorized, return a 401 error
+                console.log('jwt error')
+                return context.res.status(401).end()
+              }
+              // otherwise, return a bad request error
+              console.log('bad request error')
+              return context.res.status(400).end()
             }
+            console.log('email from payload: ', payload.email)
+            // Finally, token is ok, return the email given in the token
+            // res.status(200).send({ screen: payload.email });
+            return payload.email;
+
+          }
+        },
+        checkUserRole: {
+          type: GraphQLString,
+          resolve: async function (root, params, context) {
+            const token = context.req.cookies.token;
+            if (!token) {
+              return 'auth';
+            }
+            try {
+              const payload = jwt.verify(token, JWT_SECRET);
+              const user = await User.findOne({ email: payload.email });
+              return user.role;
+            } catch (err) {
+              console.error(err);
+              return 'auth';
+            }
+          }
+        },
+        redirectToPage: {
+          type: GraphQLString,
+          resolve: async function (root, params, context) {
+            const token = context.req.cookies.token;
+            if (!token) {
+              return 'auth';
+            }
+            try {
+              const payload = jwt.verify(token, JWT_SECRET);
+              const user = await UserModel.findOne({ email: payload.email });
+              if (user.role === 'patient') {
+                return '/patient-page';
+              } else if (user.role === 'nurse') {
+                return '/nurse-page';
+              } else {
+                return '/login';
+              }
+            } catch (err) {
+              console.error(err);
+              return 'auth';
+            }
+          }
         }
+      }
     }
   }
 });
@@ -559,14 +559,14 @@ const mutation = new GraphQLObjectType({
       deleteTips: {
         type: tipsType,
         args: {
-            id: { type: GraphQLNonNull(GraphQLString) },
+          id: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-            const deleteTips = Tips.findByIdAndRemove(params.id).exec();
-            if (!deleteTips) {
-                throw new Error('Error')
-            }
-            return deleteTips;
+          const deleteTips = Tips.findByIdAndRemove(params.id).exec();
+          if (!deleteTips) {
+            throw new Error('Error')
+          }
+          return deleteTips;
         }
       },
       createAlert: {
@@ -605,4 +605,3 @@ const mutation = new GraphQLObjectType({
 });
 //
 module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });
-
