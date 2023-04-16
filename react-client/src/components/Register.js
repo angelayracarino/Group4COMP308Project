@@ -85,7 +85,7 @@ const Register = () => {
                     <TextField
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        label="Username"
+                        label="Enter Username"
                         variant="outlined"
                         color="primary"
                         type="text"
@@ -96,7 +96,7 @@ const Register = () => {
                     <TextField
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        label="Password"
+                        label="Enter Password"
                         variant="outlined"
                         color="primary"
                         type="password"
@@ -119,7 +119,7 @@ const Register = () => {
                         <TextField
                             value={firstName}
                             onChange={(e) => setFirstName(e.target.value)}
-                            label="First Name"
+                            label="Enter First Name"
                             variant="outlined"
                             color="primary"
                             type="text"
@@ -130,7 +130,7 @@ const Register = () => {
                         <TextField
                             value={lastName}
                             onChange={(e) => setLastName(e.target.value)}
-                            label="Last Name"
+                            label="Enter Last Name"
                             variant="outlined"
                             color="primary"
                             type="text"
@@ -143,7 +143,7 @@ const Register = () => {
                         <TextField
                             value={phone}
                             onChange={(e) => setPhone(e.target.value)}
-                            label="Phone"
+                            label="Enter Phone Number"
                             variant="outlined"
                             color="primary"
                             type="text"
@@ -154,7 +154,7 @@ const Register = () => {
                         <TextField
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            label="Email"
+                            label="Enter Email Address"
                             variant="outlined"
                             color="primary"
                             type="text"
@@ -163,10 +163,10 @@ const Register = () => {
                     </FormControl>
                 </Box>
                 <FormControl sx={{ mt: 1 }} fullWidth>
-                <InputLabel>Type</InputLabel>
+                <InputLabel>Select Type</InputLabel>
                     <Select
                         value={type}
-                        label="Type"
+                        label="SelectType"
                         required
                         onChange={(e) => setType(e.target.value)}
                     >
