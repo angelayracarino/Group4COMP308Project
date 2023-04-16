@@ -1,9 +1,11 @@
 //Imports
 import React from 'react';
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
-import { Link, useNavigate } from '@reach/router';
-import { Button, Table, Form, FormGroup } from 'react-bootstrap';
+import { gql, useMutation } from '@apollo/client';
+import Spinner from 'react-bootstrap/Spinner';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+//
+import { useNavigate } from 'react-router-dom';
 
 
 //Create a gql for Vitals
