@@ -16,5 +16,5 @@ module.exports = function() {
 	//require('../models/Alert');
 
 	// Return the Mongoose connection instance
-	return db;
+	return db;
 };
