@@ -145,6 +145,15 @@ const alertType = new GraphQLObjectType({
       phoneNumber: {
         type: GraphQLString
       },
+      patientName: {
+        type: GraphQLString
+      },
+      address: {
+        type: GraphQLString
+      },
+      message: {
+        type: GraphQLString
+      },
     }
   }
 });
@@ -197,6 +206,13 @@ const queryType = new GraphQLObjectType({
             type: GraphQLString
           }
         },
+        resolve: function (root, params) {
+          const alertInfo = AlertModel.findById(params.id).exec()
+          if (!alertInfo) {
+            throw new Error('Error')
+          }
+          return alertInfo
+        }
       },
       tips: {
         type: new GraphQLList(tipType),
@@ -612,14 +628,30 @@ const mutation = new GraphQLObjectType({
           responderName: { type: GraphQLNonNull(GraphQLString) },
           email: { type: GraphQLNonNull(GraphQLString) },
           phoneNumber: { type: GraphQLNonNull(GraphQLString) },
+          patientName: { type: GraphQLNonNull(GraphQLString) },
+          address: { type: GraphQLNonNull(GraphQLString) },
+          message: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const alertModel = new Alert(params);
+          const alertModel = new AlertModel(params);
           const newAlert = alertModel.save();
           if (!newAlert) {
             throw new Error('Error');
           }
           return newAlert
+        }
+      },
+      deleteAlert: {
+        type: alertType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          const deleteAlert = AlertModel.findByIdAndRemove(params.id).exec();
+          if (!deleteAlert) {
+            throw new Error('Error')
+          }
+          return deleteAlert;
         }
       },
       createSymptoms: {

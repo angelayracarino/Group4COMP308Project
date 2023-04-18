@@ -26,6 +26,8 @@ import VitalList from './components/VitalList';
 import TipList from './components/TipList';
 import EditVital from './components/EditVital';
 import EditTip from './components/EditTip';
+import CreateAlert from './components/CreateAlert';
+import AlertList from './components/AlertList';
 //
 function App() {
 
@@ -44,6 +46,8 @@ function App() {
               <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
               <Nav.Link as={Link} to="/add-tip">Create Tip</Nav.Link>
               <Nav.Link as={Link} to="/tips">Tip List</Nav.Link>
+              <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
+              <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -59,6 +63,8 @@ function App() {
           <Route path="/add-tip" element={<CreateTip />} />
           <Route path="/tips" element={<TipList />} />
           <Route path="/edit-tip/:id" element={<EditTip />} />
+          <Route path="/add-alert" element={<CreateAlert />} />
+          <Route path="/alerts" element={<AlertList />} />
         </Routes>
       </div>
     </Router>
