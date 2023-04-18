@@ -50,17 +50,28 @@ const CreateVital = () => {
     let navigate = useNavigate();
 
     let bodyTemperature, heartRate, bloodPressure, respiratoryRate, pulseRate, date, time, patient;
-    const [createVital, { data, loading, error}] = useMutation(CREATE_VITALS);
+    const [createVital, { data, loading, error }] = useMutation(CREATE_VITALS);
 
     if (loading) return 'Submitting...';
     if (error) return `Submission error! ${error.message}`;
 
     return (
         <div className="entryform">
-            <form 
+            <form
                 onSubmit={e => {
                     e.preventDefault();
-                    createVital({ variables: { bodyTemperature : bodyTemperature.value, heartRate : heartRate.value, bloodPressure : bloodPressure.value, respiratoryRate : respiratoryRate.value, pulseRate : pulseRate.value, date : date.value, time : time.value, patient : patient.value } });
+                    createVital({
+                        variables: {
+                            bodyTemperature: bodyTemperature.value,
+                            heartRate: heartRate.value,
+                            bloodPressure: bloodPressure.value,
+                            respiratoryRate: respiratoryRate.value,
+                            pulseRate: pulseRate.value,
+                            date: date.value, 
+                            time: time.value, 
+                            patient: patient.value
+                        }
+                    });
 
                     bodyTemperature.value = '';
                     heartRate.value = '';
@@ -71,7 +82,7 @@ const CreateVital = () => {
                     time.value = '';
                     patient.value = '';
 
-                    navigate('/vitals');
+                    //navigate('/vitals');
                 }}
             >
                 <Form.Group>

@@ -11,14 +11,18 @@ var GraphQLString = require('graphql').GraphQLString;
 var GraphQLInt = require('graphql').GraphQLInt;
 var GraphQLDate = require('graphql-date');
 var GraphQLBoolean = require('graphql').GraphQLBoolean;
+var GraphQLFloat = require('graphql').GraphQLFloat;
+
+// You can now use GraphQLFloat as a scalar type in your GraphQL schema or resolver code
+
 
 // Models
 var User = require('../models/User');
 var AlertModel = require('../models/Alert');
-var SymptomsModel = require('../models/Symptoms');
-var TipsModel = require('../models/Tips');
+var SymptomsModel = require('../models/Symptom');
+var TipsModel = require('../models/Tip');
 var UserModel = require('../models/User');
-var VitalModel = require('../models/Vitals');
+var VitalModel = require('../models/Vital');
 
 //
 const bcrypt = require("bcrypt");
@@ -250,6 +254,13 @@ const queryType = new GraphQLObjectType({
             type: GraphQLString
           }
         },
+        resolve: function (root, params) {
+          const vitalInfo = VitalModel.findById(params.id).exec()
+          if (!vitalInfo) {
+            throw new Error('Error')
+          }
+          return vitalInfo
+        },
         users: {
           type: new GraphQLList(userType),
           resolve: function () {
@@ -473,9 +484,11 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          time: { type: GraphQLNonNull(GraphQLString) },
+          patient: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const vitalModel = new Vital(params);
+          const vitalModel = new VitalModel(params);
           const newVital = vitalModel.save();
           if (!newVital) {
             throw new Error('Error');
@@ -493,19 +506,21 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          time: { type: GraphQLNonNull(GraphQLString) },
+          patient: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
           try {
-            const updateVital = Vital.findByIdAndUpdate(
+            const updateVital = VitalModel.findByIdAndUpdate(
               params.id, {
-              $set: {
-                bodyTemperature: params.bodyTemperature,
-                heartRate: params.heartRate,
-                bloodPressure: params.bloodPressure,
-                respiratoryRate: params.respiratoryRate,
-                pulseRate: params.pulseRate,
-                date: params.date
-              }
+              bodyTemperature: params.bodyTemperature,
+              heartRate: params.heartRate,
+              bloodPressure: params.bloodPressure,
+              respiratoryRate: params.respiratoryRate,
+              pulseRate: params.pulseRate,
+              date: params.date,
+              time: params.time,
+              patient: params.patient
             }, { new: true }).exec();
             if (!updateVital) {
               throw new Error('Error')

@@ -20,7 +20,7 @@ import './App.css';
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
-import Vitals from './components/Vitals';
+import CreateVitals from './components/CreateVitals';
 //
 function App() {
 
@@ -35,7 +35,7 @@ function App() {
             <Nav className="ml-auto">
               {/* <Nav.Link as={Link} to="/register">Register</Nav.Link> */}
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
-              <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
+              <Nav.Link as={Link} to="/add-vitals">Vitals</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -45,7 +45,7 @@ function App() {
         <Routes>
           <Route path="/login" element={< Login />} />
           {/* <Route path="/register" element={<Register />} /> */}
-          <Route path="/vitals" element={<Vitals />} />
+          <Route path="/add-vitals" element={<CreateVitals />} />
         </Routes>
       </div>
 
