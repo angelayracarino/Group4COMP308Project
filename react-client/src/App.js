@@ -20,7 +20,9 @@ import './App.css';
 import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
-import CreateVitals from './components/CreateVitals';
+import CreateVital from './components/CreateVital';
+import VitalList from './components/VitalList';
+import EditVital from './components/EditVital';
 //
 function App() {
 
@@ -35,7 +37,8 @@ function App() {
             <Nav className="ml-auto">
               {/* <Nav.Link as={Link} to="/register">Register</Nav.Link> */}
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
-              <Nav.Link as={Link} to="/add-vitals">Vitals</Nav.Link>
+              <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
+              <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -45,7 +48,9 @@ function App() {
         <Routes>
           <Route path="/login" element={< Login />} />
           {/* <Route path="/register" element={<Register />} /> */}
-          <Route path="/add-vitals" element={<CreateVitals />} />
+          <Route path="/add-vitals" element={<CreateVital />} />
+          <Route path="/vitals" element={<VitalList />} />
+          <Route path="/edit-vital/:id" element={<EditVital />} />
         </Routes>
       </div>
 

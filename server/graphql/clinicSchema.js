@@ -531,6 +531,23 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
+      deleteVital: {
+        type: vitalType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          try {
+            const deleteVital = VitalModel.findByIdAndRemove(params.id).exec();
+            if (!deleteVital) {
+              throw new Error('Error')
+            }
+            return deleteVital;
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      },
       createTips: {
         type: tipType,
         args: {
