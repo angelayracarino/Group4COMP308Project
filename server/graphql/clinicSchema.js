@@ -32,7 +32,7 @@ const jwtExpirySeconds = 1000;
 // and it defines the different fields or query/mutations that are available
 // in this type.
 const userType = new GraphQLObjectType({
-  name: 'user',
+  name: 'users',
   fields: function () {
     return {
       _id: {
@@ -96,7 +96,7 @@ const vitalType = new GraphQLObjectType({
         type: GraphQLString
       },
       date: {
-        type: GraphQLDate
+        type: GraphQLString
       },
       time: {
         type: GraphQLString
@@ -517,7 +517,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       createTips: {
-        type: tipsType,
+        type: tipType,
         args: {
           title: { type: GraphQLNonNull(GraphQLString) },
           description: { type: GraphQLNonNull(GraphQLString) },
@@ -532,7 +532,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       updateTips: {
-        type: tipsType,
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
           title: { type: GraphQLNonNull(GraphQLString) },
@@ -557,7 +557,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       deleteTips: {
-        type: tipsType,
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
         },

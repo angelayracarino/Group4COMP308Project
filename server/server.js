@@ -47,7 +47,7 @@ app.use('/graphql', graphqlHTTP( (request, response) =>  {
 }));
 //
 // Use the Express application instance to listen to the '4000' port
-app.listen(4000, () => console.log('Express GraphQL Server Now Running On http://localhost:4000/graphql'));
+app.listen(8000, () => console.log('Express GraphQL Server Now Running On http://localhost:8000/graphql'));
 
 // Use the module.exports property to expose our Express application instance for external usage
 module.exports = app;

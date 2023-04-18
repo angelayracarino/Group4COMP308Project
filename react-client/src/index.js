@@ -2,31 +2,36 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
-//
-import { ApolloClient, InMemoryCache, createHttpLink  } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client';
-//
-const link = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
-  credentials: 'include'
-});
-//
+import reportWebVitals from './reportWebVitals';
+//import { UserProvider } from './shared/UserContext';
+
+const defaultOptions = {
+  watchQuery: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'ignore',
+  },
+  query: {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  },
+}
+
 const client = new ApolloClient({
+  uri: 'http://localhost:8080/graphql',
   cache: new InMemoryCache(),
-  link,
+  defaultOptions
 });
-//
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-
     <ApolloProvider client={client}>
-
-    <App/>
-
+      
+        <App />
+ 
     </ApolloProvider>
-
   </React.StrictMode>
 );
 

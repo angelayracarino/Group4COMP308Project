@@ -163,7 +163,7 @@ const Register = () => {
                     </FormControl>
                 </Box>
                 <FormControl sx={{ mt: 1 }} fullWidth>
-                <InputLabel>Select Type</InputLabel>
+                <InputLabel>Select Role</InputLabel>
                     <Select
                         value={type}
                         label="SelectType"

@@ -9,30 +9,29 @@ import { useNavigate } from 'react-router-dom';
 
 //Create gql for Tips
 
-const CREATE_TIPS = gql`
-    mutation createTips(
+const CREATE_TIP_MUTATION = gql`
+    mutation createTip(
         $title: String!
         $description: String!
-    }
     ) {
-        createTips(
+        createTip(
             title: $title
             description: $description
+        ) {
+            _id
+            title
+            description
         }
-    ) {
-        _id
-        title
-        description
     }
 `;
 
 //Create a function to create a new tip
-const createTips = () => {
+const CreateTipForm = () => {
 
     let navigate = useNavigate();
     
     let title, description;
-    const [createTips, { data, loading, error}] = useMutation(CREATE_TIPS);
+    const [createTip, { data, loading, error}] = useMutation(CREATE_TIP_MUTATION);
 
     if (loading) return 'Submitting...';
     if (error) return `Submission error! ${error.message}`;
@@ -42,7 +41,7 @@ const createTips = () => {
             <form
                 onSubmit={e => {
                     e.preventDefault();
-                    createTips({ variables: { title : title.value, description : description.value } });
+                    createTip({ variables: { title : title.value, description : description.value } });
 
                     title.value = '';
                     description.value = '';
@@ -51,15 +50,15 @@ const createTips = () => {
                 }}
             >
             
-            <FormGroup>
+            <Form.Group>
                 <Form.Label>Title</Form.Label>
                 <Form.Control type="text" ref={node => { title = node; }} />
-            </FormGroup>
+            </Form.Group>
 
-            <FormGroup>
+            <Form.Group>
                 <Form.Label>Description</Form.Label>
                 <Form.Control type="text" ref={node => { description = node; }} />
-            </FormGroup>
+            </Form.Group>
 
             <Button variant="primary" type="submit">Submit</Button>
             </form>
@@ -67,7 +66,4 @@ const createTips = () => {
     );
 };
 
-export default createTips;
-
-
-            
+export default CreateTipForm;
