@@ -19,8 +19,8 @@ var GraphQLFloat = require('graphql').GraphQLFloat;
 // Models
 var User = require('../models/User');
 var AlertModel = require('../models/Alert');
-var SymptomsModel = require('../models/Symptom');
-var TipsModel = require('../models/Tip');
+var SymptomModel = require('../models/Symptom');
+var TipModel = require('../models/Tip');
 var UserModel = require('../models/User');
 var VitalModel = require('../models/Vital');
 
@@ -201,7 +201,7 @@ const queryType = new GraphQLObjectType({
       tips: {
         type: new GraphQLList(tipType),
         resolve: function () {
-          const tips = TipsModel.find().exec()
+          const tips = TipModel.find().exec()
           if (!tips) {
             throw new Error('Error')
           }
@@ -215,12 +215,19 @@ const queryType = new GraphQLObjectType({
             name: '_id',
             type: GraphQLString
           }
+        },
+        resolve: function (root, params) {
+          const tipInfo = TipModel.findById(params.id).exec()
+          if (!tipInfo) {
+            throw new Error('Error')
+          }
+          return tipInfo
         }
       },
       symptoms: {
         type: new GraphQLList(symptomsType),
         resolve: function () {
-          const symptoms = SymptomsModel.find().exec()
+          const symptoms = SymptomModel.find().exec()
           if (!symptoms) {
             throw new Error('Error')
           }
@@ -548,14 +555,14 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
-      createTips: {
+      createTip: {
         type: tipType,
         args: {
           title: { type: GraphQLNonNull(GraphQLString) },
           description: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const tipsModel = new Tips(params);
+          const tipsModel = new TipModel(params);
           const newTips = tipsModel.save();
           if (!newTips) {
             throw new Error('Error');
@@ -563,7 +570,7 @@ const mutation = new GraphQLObjectType({
           return newTips
         }
       },
-      updateTips: {
+      updateTip: {
         type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
@@ -572,12 +579,10 @@ const mutation = new GraphQLObjectType({
         },
         resolve: function (root, params, context) {
           try {
-            const updateTips = Tips.findByIdAndUpdate(
+            const updateTips = TipModel.findByIdAndUpdate(
               params.id, {
-              $set: {
-                title: params.title,
-                description: params.description,
-              }
+              title: params.title,
+              description: params.description,
             }, { new: true }).exec();
             if (!updateTips) {
               throw new Error('Error')
@@ -588,13 +593,13 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
-      deleteTips: {
+      deleteTip: {
         type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const deleteTips = Tips.findByIdAndRemove(params.id).exec();
+          const deleteTips = TipModel.findByIdAndRemove(params.id).exec();
           if (!deleteTips) {
             throw new Error('Error')
           }
