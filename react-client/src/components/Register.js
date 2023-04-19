@@ -260,4 +260,4 @@ const CreateUser = () => {
     );
 };
 
-export default Register
+export default CreateUser;
