@@ -112,10 +112,13 @@ function App() {
       && sessionStorage.getItem('email') !== ''
       && sessionStorage.getItem('email') !== null;
   }
-  
+
   const isNurse = () => {
     return isLoggedIn() && sessionStorage.getItem('role') === 'nurse';
   }
+
+  const user_email = sessionStorage.getItem('email');
+  const user_role = sessionStorage.getItem('role');
 
   return (
     <Router>
@@ -151,21 +154,7 @@ function App() {
                         <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
                       </Fragment>
                     }
-
-                    <div className={`nav-link`} style={{ cursor: "pointer" }} onClick={() => setIsOpen(true)}> Account Settings </div>
-                      <Modal show={isOpen} onHide={() => setIsOpen(false)}>
-                        <Modal.Header closeButton>
-                          <Modal.Title>Account Settings</Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                          <h5>User Profile</h5>
-                          <UserProfile email={email} role={role} />
-                          <h5>Change Password</h5>
-
-                        </Modal.Body>
-                        <Modal.Footer></Modal.Footer>
-                      </Modal>
-                      <div className={`nav-link`} style={{ cursor: "pointer" }} onClick={() => logout()}> Logout {email} ({role}) </div>
+                      <div className={`nav-link`} style={{ cursor: "pointer" }} onClick={() => logout()}> Logout {user_email} ({user_role}) </div>
                   </Fragment>
               }
             </Nav>

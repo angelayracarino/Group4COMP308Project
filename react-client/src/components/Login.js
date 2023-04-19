@@ -49,7 +49,8 @@ function Login() {
       setAuthToken(data.loginUser.token);
       setAuthUserToken(data.loginUser.email);
       setAuthRole(data.loginUser.role);
-      //window.location.href = '/home';
+      window.location.href = '/home';
+      
     } catch (error) {
       console.error('Login error:', error);
     }
