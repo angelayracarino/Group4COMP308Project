@@ -29,6 +29,7 @@ import EditTip from './components/EditTip';
 import CreateAlert from './components/CreateAlert';
 import AlertList from './components/AlertList';
 import Game from './components/Game';
+import Checkup from './components/Checkup';
 //
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
               <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
               <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
               <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
+              <Nav.Link as={Link} to="/checkup">Checkup</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -68,6 +70,7 @@ function App() {
           <Route path="/add-alert" element={<CreateAlert />} />
           <Route path="/alerts" element={<AlertList />} />
           <Route path="/fitness" element={<Game />} />
+          <Route path="/checkup" element={<Checkup />} />
         </Routes>
       </div>
     </Router>

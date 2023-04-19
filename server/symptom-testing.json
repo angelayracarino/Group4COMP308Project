@@ -1,7 +1,7 @@
 [
     {
-        "bodyTemperature": 36.5,
-        "heartRate": 78,
+        "body_temperature": 36.5,
+        "heart_rate": 78,
         "systolic": 117,
         "diastolic": 68,
         "respiratoryRate": 13,
