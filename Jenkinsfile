@@ -83,14 +83,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            // Add notification steps here
-        }
-
-        failure {
-            // Add error handling steps here
-        }
-    }
 }
