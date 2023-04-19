@@ -12,14 +12,14 @@ import { useNavigate } from 'react-router-dom';
 
 const CREATE_VITALS = gql`
     mutation createVital(
-        $bodyTemperature: String!
-        $heartRate: String!
-        $bloodPressure: String!
-        $respiratoryRate: String!
-        $pulseRate: String!
-        $date: String!
-        $time: String!
-        $patient: String!
+        bodyTemperature: number!
+        heartRate: number!
+        bloodPressure: number!
+        respiratoryRate: number!
+        pulseRate: number!
+        date: Date!
+        time: String!
+        patient: String!
     ) {
         createVital(
             bodyTemperature: $bodyTemperature
@@ -45,7 +45,7 @@ const CREATE_VITALS = gql`
 
 //Create a mutation for Vitals
 
-const CreateVital = () => {
+const createVital = () => {
 
     let navigate = useNavigate();
 
@@ -74,45 +74,45 @@ const CreateVital = () => {
                     navigate('/vitals');
                 }}
             >
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Body Temperature</Form.Label>
-                    <Form.Control type="number" placeholder="Enter body temperature" ref={node => { bodyTemperature = node; }} />
-                </Form.Group>
+                    <Form.Control type="text" placeholder="Enter body temperature" ref={node => { bodyTemperature = node; }} />
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Heart Rate</Form.Label>
-                    <Form.Control type="number" placeholder="Enter heart rate" ref={node => { heartRate = node; }} />
-                </Form.Group>
+                    <Form.Control type="text" placeholder="Enter heart rate" ref={node => { heartRate = node; }} />
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Blood Pressure</Form.Label>
-                    <Form.Control type="number" placeholder="Enter blood pressure" ref={node => { bloodPressure = node; }} />
-                </Form.Group>
+                    <Form.Control type="text" placeholder="Enter blood pressure" ref={node => { bloodPressure = node; }} />
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Respiratory Rate</Form.Label>
-                    <Form.Control type="number" placeholder="Enter respiratory rate" ref={node => { respiratoryRate = node; }} />
-                </Form.Group>
+                    <Form.Control type="text" placeholder="Enter respiratory rate" ref={node => { respiratoryRate = node; }} />
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Pulse Rate</Form.Label>
-                    <Form.Control type="number" placeholder="Enter pulse rate" ref={node => { pulseRate = node; }} />
-                </Form.Group>
+                    <Form.Control type="text" placeholder="Enter pulse rate" ref={node => { pulseRate = node; }} />
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Date</Form.Label>
                     <Form.Control type="date" placeholder="Enter date" ref={node => { date = node; }} />
-                </Form.Group>
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Time</Form.Label>
                     <Form.Control type="time" placeholder="Enter time" ref={node => { time = node; }} />
-                </Form.Group>
+                </FormGroup>
 
-                <Form.Group>
+                <FormGroup>
                     <Form.Label>Patient</Form.Label>
                     <Form.Control type="text" placeholder="Enter patient" ref={node => { patient = node; }} />
-                </Form.Group>
+                </FormGroup>
 
                 <Button variant="primary" type="submit">Submit</Button>
             </form>
@@ -120,4 +120,4 @@ const CreateVital = () => {
     );
 };
 
-export default CreateVital;
+export default createVital;
