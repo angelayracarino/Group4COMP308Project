@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const TipsSchema = new Schema({
+const TipSchema = new Schema({
     title: {
         type: String,
         required: true
@@ -14,4 +14,4 @@ const TipsSchema = new Schema({
 
 });
 
-module.exports = Tips = mongoose.model('tips', TipsSchema);
+module.exports = mongoose.model('Tip', TipSchema);
