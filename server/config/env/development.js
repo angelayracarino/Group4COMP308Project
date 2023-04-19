@@ -2,5 +2,5 @@
 module.exports = {
 	db: 'mongodb://127.0.0.1/hospital-dev',
 	sessionSecret: 'developmentSessionSecret',
-	JWT_SECRET: 'developmentJwtSecret'
+	JWT_SECRET: 'some_secret_key'
 };

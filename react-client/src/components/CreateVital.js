@@ -131,4 +131,4 @@ const CreateVital = () => {
     );
 };
 
-export default CreateVital;
+export default createVital;
