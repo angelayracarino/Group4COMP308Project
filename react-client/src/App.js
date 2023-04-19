@@ -28,6 +28,7 @@ import EditVital from './components/EditVital';
 import EditTip from './components/EditTip';
 import CreateAlert from './components/CreateAlert';
 import AlertList from './components/AlertList';
+import Game from './components/Game';
 //
 function App() {
 
@@ -48,6 +49,7 @@ function App() {
               <Nav.Link as={Link} to="/tips">Tip List</Nav.Link>
               <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
               <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
+              <Nav.Link as={Link} to="/fitness">Add Symptoms</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -65,6 +67,7 @@ function App() {
           <Route path="/edit-tip/:id" element={<EditTip />} />
           <Route path="/add-alert" element={<CreateAlert />} />
           <Route path="/alerts" element={<AlertList />} />
+          <Route path="/fitness" element={<Game />} />
         </Routes>
       </div>
     </Router>
