@@ -32,7 +32,49 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.game-container {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.exercise-name {
+  font-size: 24px;
+  margin-bottom: 1rem;
+}
+
+.time-remaining {
+  font-size: 18px;
+  margin-bottom: 0.5rem;
+}
+
+.exercise-counter {
+  font-size: 18px;
+  margin-bottom: 1rem;
+}
+
+.congratulations {
+  font-size: 24px;
+  margin-bottom: 1rem;
+}
+
+.total-exercises {
+  font-size: 18px;
+  margin-bottom: 1rem;
 }

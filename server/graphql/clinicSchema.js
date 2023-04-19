@@ -11,14 +11,18 @@ var GraphQLString = require('graphql').GraphQLString;
 var GraphQLInt = require('graphql').GraphQLInt;
 var GraphQLDate = require('graphql-date');
 var GraphQLBoolean = require('graphql').GraphQLBoolean;
+var GraphQLFloat = require('graphql').GraphQLFloat;
+
+// You can now use GraphQLFloat as a scalar type in your GraphQL schema or resolver code
+
 
 // Models
 var User = require('../models/User');
 var AlertModel = require('../models/Alert');
-var SymptomsModel = require('../models/Symptoms');
-var TipsModel = require('../models/Tips');
+var SymptomModel = require('../models/Symptom');
+var TipModel = require('../models/Tip');
 var UserModel = require('../models/User');
-var VitalModel = require('../models/Vitals');
+var VitalModel = require('../models/Vital');
 
 //
 const bcrypt = require("bcrypt");
@@ -96,7 +100,7 @@ const vitalType = new GraphQLObjectType({
         type: GraphQLString
       },
       date: {
-        type: GraphQLDate
+        type: GraphQLString
       },
       time: {
         type: GraphQLString
@@ -139,6 +143,15 @@ const alertType = new GraphQLObjectType({
         type: GraphQLString
       },
       phoneNumber: {
+        type: GraphQLString
+      },
+      patientName: {
+        type: GraphQLString
+      },
+      address: {
+        type: GraphQLString
+      },
+      message: {
         type: GraphQLString
       },
     }
@@ -187,11 +200,18 @@ const queryType = new GraphQLObjectType({
             type: GraphQLString
           }
         },
+        resolve: function (root, params) {
+          const alertInfo = AlertModel.findById(params.id).exec()
+          if (!alertInfo) {
+            throw new Error('Error')
+          }
+          return alertInfo
+        }
       },
       tips: {
         type: new GraphQLList(tipType),
         resolve: function () {
-          const tips = TipsModel.find().exec()
+          const tips = TipModel.find().exec()
           if (!tips) {
             throw new Error('Error')
           }
@@ -205,12 +225,19 @@ const queryType = new GraphQLObjectType({
             name: '_id',
             type: GraphQLString
           }
+        },
+        resolve: function (root, params) {
+          const tipInfo = TipModel.findById(params.id).exec()
+          if (!tipInfo) {
+            throw new Error('Error')
+          }
+          return tipInfo
         }
       },
       symptoms: {
         type: new GraphQLList(symptomsType),
         resolve: function () {
-          const symptoms = SymptomsModel.find().exec()
+          const symptoms = SymptomModel.find().exec()
           if (!symptoms) {
             throw new Error('Error')
           }
@@ -244,126 +271,133 @@ const queryType = new GraphQLObjectType({
             type: GraphQLString
           }
         },
+        resolve: function (root, params) {
+          const vitalInfo = VitalModel.findById(params.id).exec()
+          if (!vitalInfo) {
+            throw new Error('Error')
+          }
+          return vitalInfo
+        },
         users: {
-            type: new GraphQLList(userType),
-            resolve: function () {
-              const users = User.find().exec()
-              if (!users) {
-                throw new Error('Error')
-              }
-              return users
+          type: new GraphQLList(userType),
+          resolve: function () {
+            const users = User.find().exec()
+            if (!users) {
+              throw new Error('Error')
+            }
+            return users
+          }
+        },
+        user: {
+          type: userType,
+          args: {
+            id: {
+              name: '_id',
+              type: GraphQLString
             }
           },
-          user: {
-            type: userType,
-            args: {
-              id: {
-                name: '_id',
-                type: GraphQLString
-              }
-            },
-            resolve: function (root, params) {
-              const userInfo = User.findById(params.id).exec()
-              if (!userInfo) {
-                throw new Error('Error')
-              }
-              return userInfo
+          resolve: function (root, params) {
+            const userInfo = User.findById(params.id).exec()
+            if (!userInfo) {
+              throw new Error('Error')
             }
+            return userInfo
+          }
+        },
+        // check if user is logged in
+        isLoggedIn: {
+          type: GraphQLString,
+          args: {
+            email: {
+              name: 'email',
+              type: GraphQLString
+            }
+
           },
-          // check if user is logged in
-          isLoggedIn: {
-            type: GraphQLString,
-            args: {
-              email: {
-                name: 'email',
-                type: GraphQLString
-              }
-    
-            },
-            resolve: async function (root, params, context) {
-              //
-              console.log(params)
-              console.log('in isLoggedIn.....')
-              console.log(context.req.cookies['token'])
-              console.log('token: ')
-              //
-              // Obtain the session token from the requests cookies,
-              // which come with every request
-              const token = context.req.cookies.token
-              console.log('token from request: ', token)
-              // if the cookie is not set, return 'auth'
-              if (!token) {
-                console.log('no token, so return auth')
-                return 'auth';
-              }
-              var payload;
-              try {
-                // Parse the JWT string and store the result in `payload`.
-                // Note that we are passing the key in this method as well. 
-                // This method will throw an error
-                // if the token is invalid (if it has expired according to the expiry time
-                //  we set on sign in), or if the signature does not match
-                const payload = jwt.verify(token, JWT_SECRET)
-                const user = await User.findOne({ email: payload.email });
-                return user.role;
-              } catch (e) {
-                if (e instanceof jwt.JsonWebTokenError) {
-                  // the JWT is unauthorized, return a 401 error
-                  console.log('jwt error')
-                  return context.res.status(401).end()
-                }
-                // otherwise, return a bad request error
-                console.log('bad request error')
-                return context.res.status(400).end()
-              }
-              console.log('email from payload: ', payload.email)
-              // Finally, token is ok, return the email given in the token
-              // res.status(200).send({ screen: payload.email });
-              return payload.email;
-    
+          resolve: async function (root, params, context) {
+            //
+            console.log(params)
+            console.log('in isLoggedIn.....')
+            console.log(context.req.cookies['token'])
+            console.log('token: ')
+            //
+            // Obtain the session token from the requests cookies,
+            // which come with every request
+            const token = context.req.cookies.token
+            console.log('token from request: ', token)
+            // if the cookie is not set, return 'auth'
+            if (!token) {
+              console.log('no token, so return auth')
+              return 'auth';
             }
-          },
-            checkUserRole: {
-                type: GraphQLString,
-                resolve: async function (root, params, context) {
-                    const token = context.req.cookies.token;
-                    if (!token) {
-                        return 'auth';
-                    }
-                    try {
-                        const payload = jwt.verify(token, JWT_SECRET);
-                        const user = await User.findOne({ email: payload.email });
-                        return user.role;
-                    } catch (err) {
-                        console.error(err);
-                        return 'auth';
-                    }
-                }
-            },
-            redirectToPage: {
-                type: GraphQLString,
-                resolve: async function (root, params, context) {
-                    const token = context.req.cookies.token;
-                    if (!token) {
-                        return 'auth';
-                    }
-                    try {
-                        const payload = jwt.verify(token, JWT_SECRET);
-                        const user = await UserModel.findOne({ email: payload.email });
-                        if (user.role === 'patient') {
-                            return '/patient-page';
-                        } else if (user.role === 'nurse') {
-                            return '/nurse-page';
-                        } else {
-                            return '/login';
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        return 'auth';
-                    }
-                }
+            var payload;
+            try {
+              // Parse the JWT string and store the result in payload.
+              // Note that we are passing the key in this method as well. 
+              // This method will throw an error
+              // if the token is invalid (if it has expired according to the expiry time
+              //  we set on sign in), or if the signature does not match
+              const payload = jwt.verify(token, JWT_SECRET)
+              const user = await User.findOne({ email: payload.email });
+              return user.role;
+            } catch (e) {
+              if (e instanceof jwt.JsonWebTokenError) {
+                // the JWT is unauthorized, return a 401 error
+                console.log('jwt error')
+                return context.res.status(401).end()
+              }
+              // otherwise, return a bad request error
+              console.log('bad request error')
+              return context.res.status(400).end()
             }
+            console.log('email from payload: ', payload.email)
+            // Finally, token is ok, return the email given in the token
+            // res.status(200).send({ screen: payload.email });
+            return payload.email;
+
+          }
+        },
+        checkUserRole: {
+          type: GraphQLString,
+          resolve: async function (root, params, context) {
+            const token = context.req.cookies.token;
+            if (!token) {
+              return 'auth';
+            }
+            try {
+              const payload = jwt.verify(token, JWT_SECRET);
+              const user = await User.findOne({ email: payload.email });
+              return user.role;
+            } catch (err) {
+              console.error(err);
+              return 'auth';
+            }
+          }
+        },
+        redirectToPage: {
+          type: GraphQLString,
+          resolve: async function (root, params, context) {
+            const token = context.req.cookies.token;
+            if (!token) {
+              return 'auth';
+            }
+            try {
+              const payload = jwt.verify(token, JWT_SECRET);
+              const user = await UserModel.findOne({ email: payload.email });
+              if (user.role === 'patient') {
+                return '/patient-page';
+              } else if (user.role === 'nurse') {
+                return '/nurse-page';
+              } else {
+                return '/login';
+              }
+            } catch (err) {
+              console.error(err);
+              return 'auth';
+            }
+          }
         }
+      }
     }
   }
 });
@@ -467,9 +501,11 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          time: { type: GraphQLNonNull(GraphQLString) },
+          patient: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const vitalModel = new Vital(params);
+          const vitalModel = new VitalModel(params);
           const newVital = vitalModel.save();
           if (!newVital) {
             throw new Error('Error');
@@ -487,19 +523,21 @@ const mutation = new GraphQLObjectType({
           respiratoryRate: { type: GraphQLNonNull(GraphQLString) },
           pulseRate: { type: GraphQLNonNull(GraphQLString) },
           date: { type: GraphQLNonNull(GraphQLString) },
+          time: { type: GraphQLNonNull(GraphQLString) },
+          patient: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
           try {
-            const updateVital = Vital.findByIdAndUpdate(
+            const updateVital = VitalModel.findByIdAndUpdate(
               params.id, {
-              $set: {
-                bodyTemperature: params.bodyTemperature,
-                heartRate: params.heartRate,
-                bloodPressure: params.bloodPressure,
-                respiratoryRate: params.respiratoryRate,
-                pulseRate: params.pulseRate,
-                date: params.date
-              }
+              bodyTemperature: params.bodyTemperature,
+              heartRate: params.heartRate,
+              bloodPressure: params.bloodPressure,
+              respiratoryRate: params.respiratoryRate,
+              pulseRate: params.pulseRate,
+              date: params.date,
+              time: params.time,
+              patient: params.patient
             }, { new: true }).exec();
             if (!updateVital) {
               throw new Error('Error')
@@ -510,14 +548,31 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
-      createTips: {
-        type: tipsType,
+      deleteVital: {
+        type: vitalType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          try {
+            const deleteVital = VitalModel.findByIdAndRemove(params.id).exec();
+            if (!deleteVital) {
+              throw new Error('Error')
+            }
+            return deleteVital;
+          } catch (err) {
+            console.log(err)
+          }
+        }
+      },
+      createTip: {
+        type: tipType,
         args: {
           title: { type: GraphQLNonNull(GraphQLString) },
           description: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const tipsModel = new Tips(params);
+          const tipsModel = new TipModel(params);
           const newTips = tipsModel.save();
           if (!newTips) {
             throw new Error('Error');
@@ -525,8 +580,8 @@ const mutation = new GraphQLObjectType({
           return newTips
         }
       },
-      updateTips: {
-        type: tipsType,
+      updateTip: {
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
           title: { type: GraphQLNonNull(GraphQLString) },
@@ -534,12 +589,10 @@ const mutation = new GraphQLObjectType({
         },
         resolve: function (root, params, context) {
           try {
-            const updateTips = Tips.findByIdAndUpdate(
+            const updateTips = TipModel.findByIdAndUpdate(
               params.id, {
-              $set: {
-                title: params.title,
-                description: params.description,
-              }
+              title: params.title,
+              description: params.description,
             }, { new: true }).exec();
             if (!updateTips) {
               throw new Error('Error')
@@ -550,17 +603,17 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
-      deleteTips: {
-        type: tipsType,
+      deleteTip: {
+        type: tipType,
         args: {
-            id: { type: GraphQLNonNull(GraphQLString) },
+          id: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-            const deleteTips = Tips.findByIdAndRemove(params.id).exec();
-            if (!deleteTips) {
-                throw new Error('Error')
-            }
-            return deleteTips;
+          const deleteTips = TipModel.findByIdAndRemove(params.id).exec();
+          if (!deleteTips) {
+            throw new Error('Error')
+          }
+          return deleteTips;
         }
       },
       createAlert: {
@@ -569,14 +622,30 @@ const mutation = new GraphQLObjectType({
           responderName: { type: GraphQLNonNull(GraphQLString) },
           email: { type: GraphQLNonNull(GraphQLString) },
           phoneNumber: { type: GraphQLNonNull(GraphQLString) },
+          patientName: { type: GraphQLNonNull(GraphQLString) },
+          address: { type: GraphQLNonNull(GraphQLString) },
+          message: { type: GraphQLNonNull(GraphQLString) },
         },
         resolve: function (root, params, context) {
-          const alertModel = new Alert(params);
+          const alertModel = new AlertModel(params);
           const newAlert = alertModel.save();
           if (!newAlert) {
             throw new Error('Error');
           }
           return newAlert
+        }
+      },
+      deleteAlert: {
+        type: alertType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve: function (root, params, context) {
+          const deleteAlert = AlertModel.findByIdAndRemove(params.id).exec();
+          if (!deleteAlert) {
+            throw new Error('Error')
+          }
+          return deleteAlert;
         }
       },
       createSymptoms: {
@@ -599,4 +668,3 @@ const mutation = new GraphQLObjectType({
 });
 //
 module.exports = new GraphQLSchema({ query: queryType, mutation: mutation });
-

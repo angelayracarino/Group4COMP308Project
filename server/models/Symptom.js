@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const predefinedSymptoms = [
+const predefinedSymptom = [
     'Fever',
     'Cough',
     'Fatigue',
@@ -17,17 +17,28 @@ const predefinedSymptoms = [
     'Chills'
   ];
 
-//Schema for Symptoms bullet points
-const SymptomsSchema = new Schema({
-    selectedSymptoms: {
+//Schema for Symptom bullet points
+const SymptomSchema = new Schema({
+    selectedSymptom: {
         type: [{
             type: String,
-            enum: predefinedSymptoms
+            enum: predefinedSymptom
           }],
         required: true
     },
-
+    patient: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: String,
+        required: true
+    },
+    time: {
+        type: String,
+        required: true
+    }   
 });
 
-module.exports = Symptoms = mongoose.model('symptoms', SymptomsSchema);
+module.exports = mongoose.model('Symptom', SymptomSchema);
     

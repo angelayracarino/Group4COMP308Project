@@ -15,7 +15,18 @@ const AlertSchema = new Schema({
         type: String,
         required: true
     },
-    
+    patientName: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    message: {
+        type: String,
+        required: true
+    },
 });
 
-module.exports = Alert = mongoose.model('alerts', AlertSchema);
+module.exports = mongoose.model('Alert', AlertSchema);
