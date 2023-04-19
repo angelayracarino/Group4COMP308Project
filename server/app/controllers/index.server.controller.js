@@ -74,7 +74,7 @@ exports.trainAndPredict = function (req, res) {
     //completes building of the architecture with the parameters
     model.compile({
         loss: "meanSquaredError",
-        optimizer: tf.train.adam(learning_rate), //puting the hardcoded to the react app
+        optimizer: tf.train.adam(0.06), //puting the hardcoded to the react app
     })
     console.log(model.summary())
     //
@@ -89,7 +89,7 @@ exports.trainAndPredict = function (req, res) {
         //different model and algorithm can be used to have a better result
         await model.fit(trainingData, outputData,
             {
-                epochs: epochs, //parameter to specify the number of epochs
+                epochs: 100, //parameter to specify the number of epochs
                 callbacks: { //list of callbacks to be called during training
                     onEpochEnd: async (epoch, log) => {
                         lossValue = log.loss;
