@@ -49,7 +49,7 @@ function App() {
               <Nav.Link as={Link} to="/tips">Tip List</Nav.Link>
               <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
               <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
-              <Nav.Link as={Link} to="/fitness">Add Symptoms</Nav.Link>
+              <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
