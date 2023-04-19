@@ -149,14 +149,8 @@ const symptomsType = new GraphQLObjectType({
   name: 'symptoms',
   fields: function () {
     return {
-      _id: {
-        type: GraphQLNonNull(GraphQLID)
-      },
       symptom: {
         type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))
-      },
-      date: {
-        type: GraphQLNonNull(GraphQLDate)
       },
     }
   }
