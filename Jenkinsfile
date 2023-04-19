@@ -1,66 +1,96 @@
 pipeline {
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'devops', description: 'The name of the Git branch to build')
+    }
+
     agent any
+
     tools {
         nodejs 'NodeJS'
     }
 
+    environment {
+        registry = "melanonuevo"
+        imageName = "comp367project"
+        imageTag = "1.0"
+    }
+
     stages {
         stage('Checkout') {
-            steps { 
-                git branch: 'devops', url: 'https://github.com/angelayracarino/Group4COMP308Project.git'
+            steps {
+                git branch: "${params.BRANCH_NAME}", url: 'https://github.com/angelayracarino/Group4COMP308Project.git'
             }
         }
+
         stage('Build') {
             steps {
                 sh 'npm install'
             }
         }
+
         stage('Test') {
             steps {
-                echo "Test"
+                echo 'Running tests...'
+                // Add your test commands here
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t ${registry}/${imageName}:${imageTag} ."
+                sh "docker build -t ${registry}/${imageName}:${imageTag} ."
             }
         }
-        
+
         stage("Docker login") {
             steps {
-             script {
-
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                    sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                 }
-             }
             }
         }
-        
+
         stage('Push Docker Image') {
             steps {
-                bat "docker push ${registry}/${imageName}:${imageTag}"
+                sh "docker push ${registry}/${imageName}:${imageTag}"
             }
         }
+
         stage ('Deploy to Dev Env') {
             steps {
-                echo "Deploy to Dev Env"
+                echo 'Deploying to Dev Env...'
+                // Add your deployment commands here
             }
         }
+
         stage ('Deploy to QAT Env') {
             steps {
-                echo "Deploy to QAT Env"
+                echo 'Deploying to QAT Env...'
+                // Add your deployment commands here
             }
         }
+
         stage ('Deploy to Staging Env') {
             steps {
-                echo "Deploy to Staging Env"
+                echo 'Deploying to Staging Env...'
+                // Add your deployment commands here
             }
         }
+
         stage ('Deploy to Prod Env') {
             steps {
-                sh 'docker run  -p 3000:3000 -d angelayracarino/Group4COMP308Project:latest'
+                echo 'Deploying to Prod Env...'
+                sh "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
             }
+        }
+    }
+
+    post {
+        always {
+            // Add notification steps here
+        }
+
+        failure {
+            // Add error handling steps here
         }
     }
 }
