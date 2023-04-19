@@ -33,7 +33,7 @@ function CreateTip() {
     return (
         <div className="entryform">
             <form
-                onSubmit={e => {
+                onSubmit={e => { 
                     e.preventDefault();
                     createTip({
                         variables: {
