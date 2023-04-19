@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const predefinedSymptom = [
+const predefinedSymptoms = [
     'Fever',
     'Cough',
     'Fatigue',
@@ -22,7 +22,7 @@ const SymptomSchema = new Schema({
     selectedSymptom: {
         type: [{
             type: String,
-            enum: predefinedSymptom
+            enum: predefinedSymptoms
           }],
         required: true
     },

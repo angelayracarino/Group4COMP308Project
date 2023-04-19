@@ -158,12 +158,13 @@ const alertType = new GraphQLObjectType({
 });
 
 const symptomsType = new GraphQLObjectType({
-  name: 'symptoms',
+  name: 'Symptom',
   fields: function () {
     return {
-      symptom: {
-        type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString)))
-      },
+      selectedSymptom: { type: GraphQLNonNull(GraphQLList(GraphQLNonNull(GraphQLString))) },
+      patient: { type: GraphQLNonNull(GraphQLString) },
+      date: { type: GraphQLNonNull(GraphQLString) },
+      time: { type: GraphQLNonNull(GraphQLString) },
     }
   }
 });
@@ -238,7 +239,7 @@ const queryType = new GraphQLObjectType({
         resolve: function () {
           const symptoms = SymptomModel.find().exec()
           if (!symptoms) {
-            throw new Error('Error')
+            return [];
           }
           return symptoms
         }
@@ -630,21 +631,30 @@ const mutation = new GraphQLObjectType({
           return deleteAlert;
         }
       },
-      createSymptoms: {
-        type: symptomsType,
-        args: {
-          symptoms: { type: GraphQLNonNull(GraphQLString) },
-          date: { type: GraphQLNonNull(GraphQLString) },
+        createSymptom: {
+          type: symptomsType,
+          args: {
+            selectedSymptom: { type: GraphQLList(GraphQLString) },
+            patient: { type: GraphQLNonNull(GraphQLString) },
+            date: { type: GraphQLNonNull(GraphQLString) },
+            time: { type: GraphQLNonNull(GraphQLString) }
+          },
+          resolve: async function (root, { selectedSymptom, patient, date, time }) {
+            try {
+              const symptom = new SymptomModel({
+                selectedSymptom,
+                patient,
+                date,
+                time
+              });
+              const newSymptom = await symptom.save();
+              return newSymptom;
+            } catch (err) {
+              console.log(err);
+              throw new Error('Error creating new symptom');
+              }
+            }
         },
-        resolve: function (root, params, context) {
-          const symptomsModel = new Symptoms(params);
-          const newSymptoms = symptomsModel.save();
-          if (!newSymptoms) {
-            throw new Error('Error');
-          }
-          return newSymptoms
-        }
-      },
     }
   }
 });

@@ -1,6 +1,10 @@
 @media all and (min-width: 480px) {
     .entryform {
       padding: 10px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: justify;
     }
   
     .entryform form {
@@ -10,3 +14,5 @@
       padding: 50px;
     }
   }
+
+  

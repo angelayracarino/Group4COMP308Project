@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
 
+
 // Create a gql mutation for Symptom
 const CREATE_SYMPTOM = gql`
     mutation createSymptom(
@@ -31,7 +32,11 @@ const CREATE_SYMPTOM = gql`
 function CreateSymptom() {
     let navigate = useNavigate();
     const [selectedSymptoms, setSelectedSymptoms] = useState([]);
-    let patient, date, time;
+    const [patient, setPatient] = useState('');
+    const [date, setDate] = useState('');
+    const [time, setTime] = useState('');
+
+    
     const [createSymptom, { data, loading, error }] = useMutation(
       CREATE_SYMPTOM
   );
@@ -66,16 +71,21 @@ function CreateSymptom() {
         createSymptom({
             variables: {
                 selectedSymptom: selectedSymptoms,
-                patient: patient.value,
-                date: date.value,
-                time: time.value
+                patient: patient,
+                date: date,
+                time: time
             }
-        });
+        })
+        .then(() => {
         setSelectedSymptoms([]);
-        patient.value = '';
-        date.value = '';
-        time.value = '';
+        setPatient('');
+        setDate('');    
+        setTime('');
         navigate('/');
+        })
+        .catch((error) => {
+        console.log(error);
+        });
     };
 
     if (loading) return 'Submitting...';
@@ -105,9 +115,7 @@ function CreateSymptom() {
                     <Form.Label>Patient Name</Form.Label>
                     <Form.Control
                         type="text"
-                        ref={node => {
-                            patient = node;
-                        }}
+                        onChange={(e) => setPatient(e.target.value)}
                         placeholder="Enter patient name"
                     />
                 </Form.Group>
@@ -115,9 +123,7 @@ function CreateSymptom() {
                     <Form.Label>Date</Form.Label>
                     <Form.Control
                         type="date"
-                        ref={node => {
-                            date = node;
-                        }}
+                        onChange={(e) => setDate(e.target.value)}
                         placeholder="Enter date"
                     />
                 </Form.Group>
@@ -125,9 +131,7 @@ function CreateSymptom() {
                     <Form.Label>Time</Form.Label>
                     <Form.Control
                         type="time"
-                        ref={node => {
-                            time = node;
-                        }}
+                        onChange={(e) => setTime(e.target.value)}
                         placeholder="Enter time"
                     />
                 </Form.Group>
