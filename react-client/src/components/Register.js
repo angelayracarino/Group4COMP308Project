@@ -82,7 +82,7 @@ const CreateUser = () => {
         setRole('');
 	};
 
-    const [createUser, {loading} ] = useMutation(CREATE_USER);
+    const [createUser, {data, loading, error} ] = useMutation(CREATE_USER);
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -112,10 +112,12 @@ const CreateUser = () => {
                     postalCode: postalCode,
                     phone: phone,
                     role: role,
-				},
+				}
 			})
 				.then(() => {
 					toast.success('User Added');
+                    console.log(firstName + ' ' + lastName, 'was successfully added!!!');
+                    //window.location.href = '/login';
 					clearState();
 				})
 				.catch((error) => {

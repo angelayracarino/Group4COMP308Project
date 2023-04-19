@@ -1,20 +1,21 @@
 
-import React, { useState } from 'react';
-import { Container, Row, Col, Image, Form, Button } from 'react-bootstrap';
-import { gql, useMutation } from '@apollo/client';
+import React, { useContext, useEffect, useState } from 'react';
+import { gql, useMutation} from '@apollo/client';
+import { Box, Button, Container, FormControl, TextField } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 
 import {
   useAuthToken,
   useAuthUserToken,
-  useAuthUserType,
-} from "./config/auth";
+  useAuthRole,
+} from "../auth/auth";
 // mutation for user login
 const LOGIN_USER = gql`
 mutation loginUser( $email: String!, $password: String! ) {
 	loginUser( email: $email, password: $password)
   {
       email
-      userType
+      role
       token
       _id
   }
@@ -23,13 +24,16 @@ mutation loginUser( $email: String!, $password: String! ) {
 
 // Login function component
 function Login() {
+
   const [loginUser, { data, loading, error }] = useMutation(LOGIN_USER);
-  let [email, setEmailOrUsername] = useState('');
+  let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
+
   const [_, setAuthToken, removeAuthtoken] = useAuthToken();
   const [__, setAuthUserToken, removeAuthUsertoken] = useAuthUserToken();
-  const [___, setAuthUserType, removeAuthUserType] = useAuthUserType();
-  const handleLogin = async (event) => {
+  const [___, setAuthRole, removeAuthRole] = useAuthRole();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const { data } = await loginUser({
@@ -37,14 +41,14 @@ function Login() {
           email, 
           password },
       });
-      console.log('Logged in as:>>>>>>>>>>>', data);
+      console.log('Logged in as:', data);
       console.log('Logged in as:', data.loginUser);
-      sessionStorage.setItem("username", data.loginUser.email);
+      sessionStorage.setItem("email", data.loginUser.email);
 
-      setAuthToken(data.login.token);
-      setAuthUserToken(data.login.username);
-      setAuthUserType(data.login.userType);
-      window.location.href = '/home';
+      setAuthToken(data.loginUser.token);
+      setAuthUserToken(data.loginUser.email);
+      setAuthRole(data.loginUser.role);
+      //window.location.href = '/home';
     } catch (error) {
       console.error('Login error:', error);
     }
@@ -96,9 +100,6 @@ function Login() {
         </form>
       </Box>
     </Container>
-
-
-    </div>
   );
 }
 //

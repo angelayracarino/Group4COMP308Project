@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 
 const TOKEN_NAME = "authToken";
 const AUTH_USER = "authUser";
-const AUTH_TYPE = "authType";
+const AUTH_ROLE = "authRole";
 
 // custom hook to handle authToken - we use compositon to decouple the auth system and it's storage
 export const useAuthToken = () => {
@@ -19,24 +19,24 @@ export const useAuthUserToken = () => {
   const removeAuthUserToken = () => removeCookie(AUTH_USER);
   return [cookies[AUTH_USER], setAuthUserToken, removeAuthUserToken];
 };
-export const useAuthUserType = () => {
-  const [cookies, setCookie, removeCookie] = useCookies([AUTH_TYPE]);
-  const setAuthType = (authType) => setCookie(AUTH_TYPE, authType);
-  const removeAuthType = () => removeCookie(AUTH_TYPE);
-  return [cookies[AUTH_TYPE], setAuthType, removeAuthType];
+export const useAuthRole = () => {
+  const [cookies, setCookie, removeCookie] = useCookies([AUTH_ROLE]);
+  const setAuthRole = (authRole) => setCookie(AUTH_ROLE, authRole);
+  const removeAuthRole = () => removeCookie(AUTH_ROLE);
+  return [cookies[AUTH_ROLE], setAuthRole, removeAuthRole];
 };
 
 export const useLogout = () => {
   const [, , removeAuthToken] = useAuthToken();
   const [, , removeAuthUserToken] = useAuthUserToken();
-  const [, , removeAuthType] = useAuthUserType();
+  const [, , removeAuthRole] = useAuthRole();
   const apolloClient = useApolloClient();
 
   const logout = async () => {
     await apolloClient.clearStore(); // we remove all information in the store
     removeAuthToken();
     removeAuthUserToken();
-    removeAuthType();
+    removeAuthRole();
   };
   return logout;
 };
