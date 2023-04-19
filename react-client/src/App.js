@@ -29,6 +29,10 @@ import EditTip from './components/EditTip';
 import CreateAlert from './components/CreateAlert';
 import AlertList from './components/AlertList';
 import Game from './components/Game';
+import { useAuthToken,
+  useAuthUserToken,
+  useAuthRole,
+  useLogout} from "./auth/auth";
 //
 function App() {
 
@@ -125,15 +129,34 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav className="ml-auto">
-              {/* <Nav.Link as={Link} to="/register">Register</Nav.Link> */}
-              <Nav.Link as={Link} to="/login">Login</Nav.Link>
-              <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
-              <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
-              <Nav.Link as={Link} to="/add-tip">Create Tip</Nav.Link>
-              <Nav.Link as={Link} to="/tips">Tip List</Nav.Link>
-              <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
-              <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
-              <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
+              <Nav.Link as={Link} to="/home" >Home</Nav.Link>
+              {
+                  !isLoggedIn() ?
+                  <Fragment>
+                    <Nav.Link as={Link} to="/register">Register</Nav.Link>
+                    <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                  </Fragment>
+                  :
+                  <Fragment>
+                    { isNurse() ?
+                      <Fragment>
+                        <Nav.Link as={Link} to="/patients">Patients</Nav.Link>
+                        <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
+                        <Nav.Link as={Link} to="/add-tip">Create Tip</Nav.Link>
+                        <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
+                        <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
+                      </Fragment>
+                        :
+                      <Fragment>
+                        <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
+                        <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
+                        <Nav.Link as={Link} to="/tips">Tip List</Nav.Link>
+                        <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
+                      </Fragment>
+                    }
+                      <div className={`nav-link`} style={{ cursor: "pointer" }} onClick={() => logout()}> Logout {user_email} ({user_role}) </div>
+                  </Fragment>
+              }
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -153,7 +176,6 @@ function App() {
           <Route path="/edit-tip/:id" element={<EditTip />} />
           <Route path="/add-alert" element={<CreateAlert />} />
           <Route path="/alerts" element={<AlertList />} />
-          <Route path="/add-symptom" element={<CreateSymptom />} />
           <Route path="/fitness" element={<Game />} />
           <Route path="/create/record/:patientIdnew" element= {<CreateVital nurseId={data} />}  />
         </Routes>
