@@ -13,7 +13,6 @@ var GraphQLDate = require('graphql-date');
 var GraphQLBoolean = require('graphql').GraphQLBoolean;
 
 // Models
-var User = require('../models/User');
 var AlertModel = require('../models/Alert');
 var SymptomsModel = require('../models/Symptoms');
 var TipsModel = require('../models/Tips');
@@ -59,7 +58,7 @@ const userType = new GraphQLObjectType({
       province: {
         type: GraphQLString
       },
-      postalcode: {
+      postalCode: {
         type: GraphQLString
       },
       phone: {
@@ -253,7 +252,7 @@ const queryType = new GraphQLObjectType({
         users: {
           type: new GraphQLList(userType),
           resolve: function () {
-            const users = User.find().exec()
+            const users = UserModel.find().exec()
             if (!users) {
               throw new Error('Error')
             }
@@ -269,11 +268,11 @@ const queryType = new GraphQLObjectType({
             }
           },
           resolve: function (root, params) {
-            const userInfo = User.findById(params.id).exec()
+            const userInfo = UserModel.findById(params.id).exec()
             if (!userInfo) {
-              throw new Error('Error')
+              throw new Error('Cannot find user')
             }
-            return userInfo
+            return userInfo;
           }
         },
         // check if user is logged in
@@ -310,7 +309,7 @@ const queryType = new GraphQLObjectType({
               // if the token is invalid (if it has expired according to the expiry time
               //  we set on sign in), or if the signature does not match
               const payload = jwt.verify(token, JWT_SECRET)
-              const user = await User.findOne({ email: payload.email });
+              const user = await UserModel.findOne({ email: payload.email });
               return user.role;
             } catch (e) {
               if (e instanceof jwt.JsonWebTokenError) {
@@ -338,7 +337,7 @@ const queryType = new GraphQLObjectType({
             }
             try {
               const payload = jwt.verify(token, JWT_SECRET);
-              const user = await User.findOne({ email: payload.email });
+              const user = await UserModel.findOne({ email: payload.email });
               return user.role;
             } catch (err) {
               console.error(err);
@@ -390,17 +389,17 @@ const mutation = new GraphQLObjectType({
           address: { type: GraphQLNonNull(GraphQLString) },
           city: { type: GraphQLNonNull(GraphQLString) },
           province: { type: GraphQLNonNull(GraphQLString) },
-          postalcode: { type: GraphQLNonNull(GraphQLString) },
+          postalCode: { type: GraphQLNonNull(GraphQLString) },
           phone: { type: GraphQLNonNull(GraphQLString) },
           role: { type: GraphQLNonNull(GraphQLString) },
         },
-        resolve: function (root, params, context) {
-          const userModel = new User(params);
+        resolve: async function (root, params) {
+          const userModel = new UserModel(params);
           const newUser = userModel.save();
           if (!newUser) {
-            throw new Error('Error');
+            throw new Error('User Not Added!!');
           }
-          return newUser
+          return newUser;
         }
       },
 
@@ -422,37 +421,37 @@ const mutation = new GraphQLObjectType({
         resolve: async function (root, params, context) {
           console.log('email:', params.email)
           // find the student with email if exists
-          const userInfo = await User.findOne({ email: params.email }).exec()
+          const userInfo = await UserModel.findOne({ email: params.email }).exec()
           console.log(userInfo)
           if (!userInfo) {
-            throw new Error('Error - student not found')
+            throw new Error('Error - user not found')
           }
-          console.log('email:', userInfo.email)
-          console.log('entered pass: ', params.password)
-          console.log('hash', userInfo.password)
-          // check if the password is correct
-          const isValidPassword = await bcrypt.compare(params.password, userInfo.password);
-          if (!isValidPassword) {
-            return 'auth';
-            //throw new Error('Invalid login credentials');
+          else{
+            console.log(userInfo.password)
+            // check if the password is correct
+            const isMatched = compare(params.password, userInfo.password);
+            console.log(isMatched + ": |" + params.password + "| vs |" + userInfo.password + "|")
+            console.log(params.password == userInfo.password)
+            console.log(params.password === userInfo.password)
+
+            if (!isMatched) {
+              throw new Error('Incorrect password')
+            }
+            else {
+              // sign the given payload (arguments of sign method) into a JSON Web Token 
+              // and which expires 300 seconds after issue
+              const token = jwt.sign({ _id: userInfo._id, email: userInfo.email, role: userInfo.userType }, JWT_SECRET,
+                { algorithm: 'HS256', expiresIn: jwtExpirySeconds });
+              console.log('registered token:', token)
+
+              // set the cookie as the token string, with a similar max age as the token
+            // here, the max age is in milliseconds
+            context.res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000, httpOnly: true });
+            console.log('cookie set with:', userInfo.email)
+            //context.res.status(200).send({ screen: userInfo.firstname });
+            return userInfo.email;
+            }
           }
-          console.log('password is valid')
-          console.log('password matches')
-          console.log('email:', userInfo.email)
-          console.log('Object id of user:', userInfo._id);
-          // sign the given payload (arguments of sign method) into a JSON Web Token 
-          // and which expires 300 seconds after issue
-          const token = jwt.sign({ _id: userInfo._id, email: userInfo.email }, JWT_SECRET,
-            { algorithm: 'HS256', expiresIn: jwtExpirySeconds });
-          console.log('registered token:', token)
-
-          // set the cookie as the token string, with a similar max age as the token
-          // here, the max age is in milliseconds
-          context.res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000, httpOnly: true });
-          console.log('cookie set with:', userInfo.email)
-          //context.res.status(200).send({ screen: userInfo.firstname });
-          return userInfo.email;
-
         } //end of resolver function
       },
       // a mutation to log the student out
@@ -517,7 +516,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       createTips: {
-        type: tipsType,
+        type: tipType,
         args: {
           title: { type: GraphQLNonNull(GraphQLString) },
           description: { type: GraphQLNonNull(GraphQLString) },
@@ -532,7 +531,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       updateTips: {
-        type: tipsType,
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
           title: { type: GraphQLNonNull(GraphQLString) },
@@ -557,7 +556,7 @@ const mutation = new GraphQLObjectType({
         }
       },
       deleteTips: {
-        type: tipsType,
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
         },

@@ -1,5 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { 
     Box, 
     Button,
@@ -14,106 +15,126 @@ import {
 import { gql, useMutation} from '@apollo/client';
 //import { UserContext } from '../shared/UserContext';
 
-const REGISTER = gql`
-    mutation Mutation(
-        $username: String!, 
-        $password: String!,
-        $firstName: String!,
-        $lastName: String!,
-        $phone: String!,
-        $email: String!,
-        $type: String!) {
-        register(
-            username: $username,
-            password: $password,
-            firstName: $firstName,
-            lastName: $lastName,
-            phone: $phone,
-            email: $email
-            type: $type) {
-                _id
-                username
-                firstName
-                lastName
-                phone
-                email
-                type
+const CREATE_USER = gql`
+    mutation createUser(
+		$firstName: String!
+		$lastName: String!
+		$email: String!
+		$password: String!
+        $address: String!
+		$city: String!
+        $province: String!
+		$postalCode: String!
+        $phone: String!
+        $role: String!
+    ) {
+        createUser(
+            firstName: $firstName
+			lastName: $lastName
+			email: $email
+			password: $password
+            address: $address
+			city: $city
+            province: $province
+			postalCode: $postalCode
+            phone: $phone
+            role: $role
+        ) {
+            _id
+            firstName
+			lastName
+			email
+			password
+            address
+			city
+            province
+			postalCode
+            phone
+            role
         }
     }
 `;
 
-const Register = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirm, setConfirm] = useState('');
+const CreateUser = () => {
     const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+	const [lastName, setLastName] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+    const [address, setAddress] = useState('');
+	const [city, setCity] = useState('');
+	const [province, setProvince] = useState('');
+    const [postalCode, setPostalCode] = useState('');
     const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [type, setType] = useState('');
+	const [role, setRole] = useState('');
+
     const navigate = useNavigate();
 
-    const [signIn, { data, error } ] = useMutation(REGISTER, {
-        onCompleted: (data) => {
-            console.log('data complete', data);
-            navigate('/');
-        },
-        onError: (error) => {
-            console.log('error', error);
-        }
-    });
+    const clearState = () => {
+		setFirstName('');
+		setLastName('');
+		setEmail('');
+		setPassword('');
+        setAddress('');
+		setCity('');
+		setProvince('');
+		setPostalCode('');
+        setPhone('');
+        setRole('');
+	};
 
-    const handleRegister = (e) => {
+    const [createUser, {loading} ] = useMutation(CREATE_USER);
+
+    const handleRegister = async (e) => {
         e.preventDefault();
-        console.log('creds', username, password)
-        signIn({ variables: { 
-            username, 
-            password,
-            firstName,
-            lastName,
-            phone,
-            email,
-            type
-        }});
-    }
+        if (
+			firstName === '' ||
+			lastName === '' ||
+			email === '' ||
+			password === '' ||
+            address === '' ||
+			city === '' ||
+            province === '' ||
+            postalCode === '' ||
+			phone === '' ||
+            role === ''
+		) {
+			toast.error('Please Fill Personal Information!!');
+		} else {
+			createUser({
+				variables: {
+					firstName: firstName,
+					lastName: lastName,
+					email: email,
+					password: password,
+                    address: address,
+					city: city,
+					province: province,
+                    postalCode: postalCode,
+                    phone: phone,
+                    role: role,
+				},
+			})
+				.then(() => {
+					toast.success('User Added');
+					clearState();
+				})
+				.catch((error) => {
+					toast.error(error.message);
+				});
+		}
+    };
+
+    if (loading)
+		return (
+			<Container className='my-3 py-3'>
+				<p>Submitting...</p>
+			</Container>
+		);
 
     return (
         <Container maxWidth="xs">
             <Box sx={{ mt: 5, display: 'flex', flexWrap: 'wrap' }}>
             <form autoComplete="off" noValidate onSubmit={handleRegister}>
-                <FormControl sx={{ mt: 1 }} fullWidth>
-                    <TextField
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        label="Enter Username"
-                        variant="outlined"
-                        color="primary"
-                        type="text"
-                        required
-                    />
-                </FormControl>
-                <FormControl sx={{ mt: 1 }} fullWidth>
-                    <TextField
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        label="Enter Password"
-                        variant="outlined"
-                        color="primary"
-                        type="password"
-                        required
-                    />
-                </FormControl>
-                <FormControl sx={{ mt: 1 }} fullWidth>
-                    <TextField
-                        value={confirm}
-                        onChange={(e) => setConfirm(e.target.value)}
-                        label="Confirm Password"
-                        variant="outlined"
-                        color="primary"
-                        type="password"
-                        required
-                    />
-                </FormControl>
                 <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
                     <FormControl sx={{ mr: 1 }} fullWidth>
                         <TextField
@@ -138,23 +159,67 @@ const Register = () => {
                         />
                     </FormControl>
                 </Box>
+                <FormControl sx={{ mt: 1 }} fullWidth>
+                    <TextField
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        label="Enter Email Address"
+                        variant="outlined"
+                        color="primary"
+                        type="email"
+                        required
+                    />
+                </FormControl>
+                <FormControl sx={{ mt: 1 }} fullWidth>
+                    <TextField
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        label="Enter Password"
+                        variant="outlined"
+                        color="primary"
+                        type="password"
+                        required
+                    />
+                </FormControl>
+                <FormControl sx={{ mt: 1 }} fullWidth>
+                    <TextField
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        label="Enter Address Line 1"
+                        variant="outlined"
+                        color="primary"
+                        type="text"
+                        required
+                    />
+                </FormControl>
+                <FormControl sx={{ mt: 1 }} fullWidth>
+                    <TextField
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        label="Enter City"
+                        variant="outlined"
+                        color="primary"
+                        type="text"
+                        required
+                    />
+                </FormControl>
                 <Box sx={{ mt: 1, display: 'flex', justifyContent: 'space-between' }}>
-                    <FormControl sx={{ mr: 1 }}>
+                    <FormControl sx={{ mr: 1 }} fullWidth>
                         <TextField
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            label="Enter Phone Number"
+                            value={province}
+                            onChange={(e) => setProvince(e.target.value)}
+                            label="Enter Province"
                             variant="outlined"
                             color="primary"
                             type="text"
                             required
                         />
                     </FormControl>
-                    <FormControl sx={{ ml: 1 }}>
+                    <FormControl sx={{ ml: 1 }} fullWidth>
                         <TextField
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            label="Enter Email Address"
+                            value={postalCode}
+                            onChange={(e) => setPostalCode(e.target.value)}
+                            label="Enter Postal Code"
                             variant="outlined"
                             color="primary"
                             type="text"
@@ -163,15 +228,26 @@ const Register = () => {
                     </FormControl>
                 </Box>
                 <FormControl sx={{ mt: 1 }} fullWidth>
-                <InputLabel>Select Type</InputLabel>
-                    <Select
-                        value={type}
-                        label="SelectType"
+                    <TextField
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        label="Enter Phone Number"
+                        variant="outlined"
+                        color="primary"
+                        type="text"
                         required
-                        onChange={(e) => setType(e.target.value)}
+                    />
+                </FormControl>
+                <FormControl sx={{ mt: 1 }} fullWidth>
+                <InputLabel>Select Role</InputLabel>
+                    <Select
+                        value={role}
+                        label="SelectRole"
+                        required
+                        onChange={(e) => setRole(e.target.value)}
                     >
-                        <MenuItem value={'Patient'}>Patient</MenuItem>
-                        <MenuItem value={'Nurse'}>Nurse</MenuItem>
+                        <MenuItem value={'patient'}>Patient</MenuItem>
+                        <MenuItem value={'nurse'}>Nurse</MenuItem>
                     </Select>
                 </FormControl>
                 <br />
@@ -184,15 +260,15 @@ const Register = () => {
                     > Cancel
                     </Button>
                     <Button
-                        type="submit"
+                        type='submit'
                         color="primary"
                         variant="contained"
                     > Register </Button>
-                </div>
+                    </div>
                 </form>
             </Box>
         </Container>
     );
-}
+};
 
-export default Register
+export default CreateUser;
