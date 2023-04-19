@@ -34,7 +34,7 @@ import { useAuthToken,
   useAuthRole,
   useLogout} from "./auth/auth";
 //
-function App() { 
+function App() {  
 
   // query for checking if user is logged in
   const PAYLOAD = gql`
