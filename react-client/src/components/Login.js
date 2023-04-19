@@ -1,49 +1,59 @@
+
 import React, { useContext, useEffect, useState } from 'react';
 import { gql, useMutation} from '@apollo/client';
 import { Box, Button, Container, FormControl, TextField } from '@mui/material';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import { Authentication } from '../auth/auth';
 
-const USER_LOGIN = gql`
-  mutation loginUser($email: String!, $password: String!) {
-    loginUser(email: $email, password: $password) {
-      _id
+import {
+  useAuthToken,
+  useAuthUserToken,
+  useAuthRole,
+} from "../auth/auth";
+// mutation for user login
+const LOGIN_USER = gql`
+mutation loginUser( $email: String!, $password: String! ) {
+	loginUser( email: $email, password: $password)
+  {
       email
       role
       token
-    }
+      _id
   }
+}
 `;
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+// Login function component
+function Login() {
 
-  const [loginUser, { loading, error }] = useMutation(USER_LOGIN, {
-    onCompleted: (data) => {
-      console.log(data);
-      const { token, role } = data.loginUser;
-      Authentication.setToken(token);
-      if (role === 'patient') {
-        window.location.href = '/home';
-      } else if (role === 'nurse') {
-        window.location.href = '/home'
-      } else {
-        window.location.href = '/home'
-      }
-    },
-    onError: (error) => {
-      console.log('error', error);
-      toast.error(error.message, { autoClose: 3000 });
+  const [loginUser, { data, loading, error }] = useMutation(LOGIN_USER);
+  let [email, setEmail] = useState('');
+  let [password, setPassword] = useState('');
+
+  const [_, setAuthToken, removeAuthtoken] = useAuthToken();
+  const [__, setAuthUserToken, removeAuthUsertoken] = useAuthUserToken();
+  const [___, setAuthRole, removeAuthRole] = useAuthRole();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const { data } = await loginUser({
+        variables: { 
+          email, 
+          password },
+      });
+      console.log('Logged in as:', data);
+      console.log('Logged in as:', data.loginUser);
+      sessionStorage.setItem("email", data.loginUser.email);
+      sessionStorage.setItem("role", data.loginUser.role);
+
+      setAuthToken(data.loginUser.token);
+      setAuthUserToken(data.loginUser.email);
+      setAuthRole(data.loginUser.role);
+      window.location.href = '/home';
+      
+    } catch (error) {
+      console.error('Login error:', error);
     }
-  });
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('creds', email, password);
-    loginUser({ variables: { email, password } });
   };
 
   return (
@@ -72,6 +82,9 @@ const Login = () => {
               type="password"
             />
           </FormControl>
+
+              {loading ? <p style={{ color: 'blue' }}>Submitting</p> : <div></div>}
+              {error ? <p style={{ color: 'red' }}>{error.message}</p> : <div></div>}
           <br />
           <br />
           <Box sx={{ mt: 2 }} style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', width: '100%' }}>
@@ -90,6 +103,6 @@ const Login = () => {
       </Box>
     </Container>
   );
-};
-
+}
+//
 export default Login;

@@ -1,3 +1,6 @@
+// Load bcrypt module, used to hash the passwords
+const bcrypt = require('bcrypt')
+
 //Create model for User
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
@@ -46,5 +49,12 @@ const UserSchema = new Schema({
         default: 'patient'
     }
 });
+
+// hash the passwords before saving
+UserSchema.pre('save', async function () {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(this.password, salt);
+    this.password = hashedPassword;
+})
 
 module.exports = mongoose.model('User', UserSchema);
