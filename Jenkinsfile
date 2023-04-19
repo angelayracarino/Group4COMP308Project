@@ -24,7 +24,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
@@ -37,21 +37,21 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh "docker build -t ${registry}/${imageName}:${imageTag} ."
+                bat "docker build -t ${registry}/${imageName}:${imageTag} ."
             }
         }
 
         stage("Docker login") {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                    bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                 }
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh "docker push ${registry}/${imageName}:${imageTag}"
+                bat "docker push ${registry}/${imageName}:${imageTag}"
             }
         }
 
@@ -79,7 +79,7 @@ pipeline {
         stage ('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
-                sh "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
+                bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
             }
         }
     }
