@@ -58,7 +58,7 @@ function App() {
       <div>
         <Routes>
           <Route path="/login" element={< Login />} />
-          {/* <Route path="/register" element={<Register />} /> */}
+          <Route path="/register" element={<Register />} />
           <Route path="/add-vitals" element={<CreateVital />} />
           <Route path="/vitals" element={<VitalList />} />
           <Route path="/edit-vital/:id" element={<EditVital />} />

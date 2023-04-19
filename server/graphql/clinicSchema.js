@@ -474,7 +474,7 @@ const mutation = new GraphQLObjectType({
             else {
               // sign the given payload (arguments of sign method) into a JSON Web Token 
               // and which expires 300 seconds after issue
-              const token = jwt.sign({ _id: userInfo._id, email: userInfo.email, role: userInfo.userType }, JWT_SECRET,
+              const token = jwt.sign({ _id: userInfo._id, email: userInfo.email, role: userInfo.role }, JWT_SECRET,
                 { algorithm: 'HS256', expiresIn: jwtExpirySeconds });
               console.log('registered token:', token)
 
@@ -553,8 +553,8 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
-      createTips: {
-        type: tipsType,
+      createTip: {
+        type: tipType,
         args: {
           title: { type: GraphQLNonNull(GraphQLString) },
           description: { type: GraphQLNonNull(GraphQLString) },
@@ -568,8 +568,8 @@ const mutation = new GraphQLObjectType({
           return newTips
         }
       },
-      updateTips: {
-        type: tipsType,
+      updateTip: {
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
           title: { type: GraphQLNonNull(GraphQLString) },
@@ -591,8 +591,8 @@ const mutation = new GraphQLObjectType({
           }
         }
       },
-      deleteTips: {
-        type: tipsType,
+      deleteTip: {
+        type: tipType,
         args: {
           id: { type: GraphQLNonNull(GraphQLString) },
         },
