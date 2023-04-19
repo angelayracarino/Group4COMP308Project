@@ -112,9 +112,9 @@ function App() {
       && sessionStorage.getItem('email') !== ''
       && sessionStorage.getItem('email') !== null;
   }
-
+  
   const isNurse = () => {
-    return isLoggedIn() && role === 'nurse';
+    return isLoggedIn() && sessionStorage.getItem('role') === 'nurse';
   }
 
   return (

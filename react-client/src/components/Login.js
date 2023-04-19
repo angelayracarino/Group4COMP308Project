@@ -44,6 +44,7 @@ function Login() {
       console.log('Logged in as:', data);
       console.log('Logged in as:', data.loginUser);
       sessionStorage.setItem("email", data.loginUser.email);
+      sessionStorage.setItem("role", data.loginUser.role);
 
       setAuthToken(data.loginUser.token);
       setAuthUserToken(data.loginUser.email);
