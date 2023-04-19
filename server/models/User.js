@@ -35,15 +35,16 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    phoneNumber: {
+    phone: {
         type: String,
         required: true
     },
     role: {
         type: String,
-        required: true
-    },
-
+        required: true,
+        enum: ['patient', 'nurse'],
+        default: 'patient'
+    }
 });
 
 module.exports = mongoose.model('User', UserSchema);
