@@ -10,9 +10,9 @@ pipeline {
     }
 
     environment {
-        registry = "melanonuevo"
-        imageName = "comp367project"
-        imageTag = "1.0"
+        registry = 'melanonuevo'
+        imageName = 'comp367project'
+        imageTag = '1.0'
     }
 
     stages {
@@ -36,7 +36,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Add your test commands here
+            // Add your test commands here
             }
         }
 
@@ -46,7 +46,7 @@ pipeline {
             }
         }
 
-        stage("Docker login") {
+        stage('Docker login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
                     bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
@@ -63,24 +63,26 @@ pipeline {
         stage('Deploy to Dev Env') {
             steps {
                 echo 'Deploying to Dev Env...'
-                // Add your deployment commands here
+            // Add your deployment commands here
             }
         }
 
         stage('Deploy to QAT Env') {
             steps {
                 echo 'Deploying to QAT Env...'
-                // Add your deployment commands here
+            // Add your deployment commands here
             }
         }
 
         stage('Deploy to Staging Env') {
+        stage('Deploy to Staging Env') {
             steps {
                 echo 'Deploying to Staging Env...'
-                // Add your deployment commands here
+            // Add your deployment commands here
             }
         }
 
+        stage('Deploy to Prod Env') {
         stage('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
