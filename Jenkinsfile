@@ -1,8 +1,4 @@
 pipeline {
-    parameters {
-        string(name: 'BRANCH_NAME', defaultValue: 'devops', description: 'The name of the Git branch to build')
-    }
-
     agent any
 
     tools {
@@ -10,85 +6,99 @@ pipeline {
     }
 
     environment {
-        registry = 'melanonuevo'
-        imageName = 'comp367project'
-        imageTag = 'latest'
-        //prod = 'prod'
-        //dev = 'dev'
-        //qat = 'qat'
-        //staging = 'staging'
-    } 
+        // Set the environment variable
+        registry = 'apple-jane'
+        imageName = 'comp308project'
+        tag = 'latest'
+        credentialsId = '92615733-e231-4a47-ac25-8feb884d4227'
+    }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${params.BRANCH_NAME}", url: 'https://github.com/angelayracarino/Group4COMP308Project.git'
+                echo "current build_id is ${env.BUILD_ID}"
+                // Get some code from a GitHub repository
+                git branch: 'devops_project', url: 'https://github.com/angelayracarino/Group4COMP308Project'
             }
         }
-
-        stage('Build') {
+        stage('Build Client') {
             steps {
-                dir('C:/ProgramData/Jenkins/.jenkins/workspace/COMP367_FinalProject/server') {
+                dir('../react-client') {
                     bat 'npm install'
-                }
-                dir('C:/ProgramData/Jenkins/.jenkins/workspace/COMP367_FinalProject/react-client') {
-                    bat 'npm install'
+                    bat 'npm run build'
                 }
             }
         }
-
+        stage('Build Server') {
+            steps {
+                dir('../server') {
+                    bat 'npm install'
+                    bat 'npm run build'
+                }
+            }
+        }
         stage('Test') {
             steps {
-                echo 'Running tests...'
-            // Add your test commands here
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                bat "docker build -t ${registry}/${imageName}:${imageTag} ."
-            }
-        }
-
-        stage('Docker login') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', usernameVariable: 'DOCKERHUB_USERNAME', passwordVariable: 'DOCKERHUB_PASSWORD')]) {
-                    bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                dir('../server') {
+                    bat 'npm test'
+                }
+                dir('../react-client') {
+                    bat 'npm test'
                 }
             }
         }
-
+        stage('Deliver') {
+            steps {
+                dir('../server') {
+                    bat 'npm install'
+                    bat 'npm run build'
+                    bat 'npm run release'
+                    //archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                }
+                dir('../react-client') {
+                    bat 'npm install'
+                    bat 'npm run build'
+                    bat 'npm run release'
+                    //archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t ${registry}/${imageName}:${tag} .'
+            }
+        }
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: credentialsId, passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
+                bat 'docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD} ${registry}'
+                }
+            }
+        }
         stage('Push Docker Image') {
             steps {
-                bat "docker push ${registry}/${imageName}:${imageTag}"
+                bat 'docker push ${registry}/${imageName}:${tag}'
             }
         }
-
         stage('Deploy to Dev Env') {
             steps {
-                echo 'Deploying to Dev Env...'
-             //bat "docker run -p 5000:5000 -d ${registry}/${imageName}:${dev}"
+                echo 'Deploy the artifact to the dev environment'
             }
         }
-
         stage('Deploy to QAT Env') {
             steps {
-                echo 'Deploying to QAT Env...'
-             //bat "docker run -p 4000:4000 -d ${registry}/${imageName}:${qat}"
+                echo 'Deploy the artifact to the QAT environment'
             }
         }
-
         stage('Deploy to Staging Env') {
             steps {
-                echo 'Deploying to Staging Env...'
-             //bat "docker run -p 3000:3001 -d ${registry}/${imageName}:${staging}"
+                echo 'Deploy the artifact to the staging environment'
             }
         }
-
-        stage('Deploy to Prod Env') {
+        stage('Deploy to Production Env') {
             steps {
-                echo 'Deploying to Prod Env...'
-                bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
+                echo 'Deploy the artifact to the production environment'
+                bat 'docker run -d -p 80:80 ${registry}/${imageName}:${tag}'
             }
         }
     }
