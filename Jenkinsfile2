@@ -12,7 +12,7 @@ pipeline {
         }
     
         environment {
-            DOCKER_USERNAME = credentials('comp367_username')
+            DOCKER_USERNAME = credentials('comp367_ID')
             registry = "janeapple"
             imageName = "comp367project"
             imageTag = "latest"
