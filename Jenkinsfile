@@ -76,7 +76,7 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                bat "docker push ${registry}/${image_name}:${tag}"
+                bat "docker push ${registry}/${image_name}:${env.BUILD_ID}"
             }
         }
         stage('Deploy to Dev Env') {
@@ -97,7 +97,7 @@ pipeline {
         stage('Deploy to Production Env') {
             steps {
                 echo 'Deploy the artifact to the production environment'
-                bat "docker run -d -p 80:80 ${registry}/${image_name}:${tag}"
+                bat "docker run -d -p 80:80 ${registry}/${image_name}:${env.BUILD_ID}"
             }
         }
     }
