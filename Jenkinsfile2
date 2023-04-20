@@ -28,10 +28,10 @@ pipeline {
             stage('Build') {
                 steps {
                     dir('C:/ProgramData/Jenkins/.jenkins/workspace/COMP367_Project/server') {
-                        bat 'npm install'
+                        sh 'npm install'
                     }
                     dir('C:/ProgramData/Jenkins/.jenkins/workspace/COMP367_Project/react-client') {
-                       bat 'npm install'
+                         sh 'npm install'
                     }
                 }
             }
@@ -45,49 +45,49 @@ pipeline {
     
             stage('Build Docker Image') {
                 steps {
-                    bat "docker build -t ${registry}/${imageName}:${imageTag} ."
+                    sh "docker build -t ${registry}/${imageName}:${imageTag} ."
                 }
             }
             
             stage('Docker login'){
                 steps {
-                    withCredentials([usernamePassword(credentialsId: 'comp367_ID', passwordVariable: 'jane22', usernameVariable: 'comp367_username')]) {
-                        bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD}"
+                    withCredentials([usernamePassword(credentialsId: 'comp367_ID', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD}"
                     }
                 }
             }
             
             stage('Push Docker Image') {
                 steps {
-                    bat "docker push jane2231/comp367: ${registry}/${imageName}:${imageTag}"
+                    sh "docker push jane2231/comp367: ${registry}/${imageName}:${imageTag}"
                 }
             }
 
         stage('Deploy to Dev Env') {
             steps {
                 echo 'Deploying to Dev Env...'
-             //bat "docker run -p 5000:5000 -d ${registry}/${imageName}:${dev}"
+             //sh "docker run -p 5000:5000 -d ${registry}/${imageName}:${dev}"
             }
         }
 
         stage('Deploy to QAT Env') {
             steps {
                 echo 'Deploying to QAT Env...'
-             //bat "docker run -p 4000:4000 -d ${registry}/${imageName}:${qat}"
+             //sh "docker run -p 4000:4000 -d ${registry}/${imageName}:${qat}"
             }
         }
 
         stage('Deploy to Staging Env') {
             steps {
                 echo 'Deploying to Staging Env...'
-             //bat "docker run -p 3000:3001 -d ${registry}/${imageName}:${staging}"
+             //sh "docker run -p 3000:3001 -d ${registry}/${imageName}:${staging}"
             }
         }
 
         stage('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
-              bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
+              sh "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
             }
         }
     }
