@@ -12,7 +12,10 @@ pipeline {
     environment {
         registry = 'melanonuevo'
         imageName = 'comp367project'
-        imageTag = '1.0'
+        prod = 'prod'
+        dev = 'dev'
+        qat = 'qat'
+        staging = 'staging'
     }
 
     stages {
@@ -63,28 +66,28 @@ pipeline {
         stage('Deploy to Dev Env') {
             steps {
                 echo 'Deploying to Dev Env...'
-            // Add your deployment commands here
+             bat "docker run -p 5000:5000 -d ${registry}/${imageName}:${dev}"
             }
         }
 
         stage('Deploy to QAT Env') {
             steps {
                 echo 'Deploying to QAT Env...'
-            // Add your deployment commands here
+             bat "docker run -p 4000:4000 -d ${registry}/${imageName}:${qat}"
             }
         }
 
         stage('Deploy to Staging Env') {
             steps {
                 echo 'Deploying to Staging Env...'
-            // Add your deployment commands here
+             bat "docker run -p 3000:3001 -d ${registry}/${imageName}:${staging}"
             }
         }
 
         stage('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
-                bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
+                bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${prod}"
             }
         }
     }
