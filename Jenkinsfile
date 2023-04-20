@@ -9,7 +9,6 @@ pipeline {
         // Set the environment variable
         registry = 'apple-jane'
         image_name = 'hospital-project'
-        tag = 'latest'
         credentialsId = '92615733-e231-4a47-ac25-8feb884d4227'
     }
 
@@ -65,13 +64,13 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                bat "docker build -t ${registry}/${image_name}:${tag} ."
+                bat "docker build -t ${registry}/${image_name}:${env.BUILD_ID} ."
             }
         }
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: credentialsId, passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD} ${registry}"
+                bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                 }
             }
         }
