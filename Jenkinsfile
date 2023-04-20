@@ -75,14 +75,12 @@ pipeline {
         }
 
         stage('Deploy to Staging Env') {
-        stage('Deploy to Staging Env') {
             steps {
                 echo 'Deploying to Staging Env...'
             // Add your deployment commands here
             }
         }
 
-        stage('Deploy to Prod Env') {
         stage('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
