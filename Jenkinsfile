@@ -82,21 +82,25 @@ pipeline {
         }
         stage('Deploy to Dev Env') {
             steps {
+                echo 'Name the dev environment'
                 echo 'Deploy the artifact to the dev environment'
             }
         }
         stage('Deploy to QAT Env') {
             steps {
+                echo 'Name the QAT environment'
                 echo 'Deploy the artifact to the QAT environment'
             }
         }
         stage('Deploy to Staging Env') {
             steps {
+                echo 'Name the staging environment'
                 echo 'Deploy the artifact to the staging environment'
             }
         }
         stage('Deploy to Production Env') {
             steps {
+                echo 'Name the production environment'
                 echo 'Deploy the artifact to the production environment'
                 bat "docker run -d -p 80:80 ${registry}/${image_name}:${env.BUILD_ID}"
             }
