@@ -21,17 +21,17 @@ pipeline {
                 git branch: "${params.BRANCH_NAME}", url: 'https://github.com/angelayracarino/Group4COMP308Project.git'
             }
         }
+    }
 
-        stage('Build') {
-            steps {
-                dir('/server/')
+    stage('Build') {
+        steps {
+            dir('/server/') {
                 bat 'npm install'
             }
-                dir('/react-client/')
+            dir('/react-client/') {
                 bat 'npm install'
             }
         }
-
         stage('Test') {
             steps {
                 echo 'Running tests...'
@@ -59,28 +59,28 @@ pipeline {
             }
         }
 
-        stage ('Deploy to Dev Env') {
+        stage('Deploy to Dev Env') {
             steps {
                 echo 'Deploying to Dev Env...'
                 // Add your deployment commands here
             }
         }
 
-        stage ('Deploy to QAT Env') {
+        stage('Deploy to QAT Env') {
             steps {
                 echo 'Deploying to QAT Env...'
                 // Add your deployment commands here
             }
         }
 
-        stage ('Deploy to Staging Env') {
+        stage('Deploy to Staging Env') {
             steps {
                 echo 'Deploying to Staging Env...'
                 // Add your deployment commands here
             }
         }
 
-        stage ('Deploy to Prod Env') {
+        stage('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
                 bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
