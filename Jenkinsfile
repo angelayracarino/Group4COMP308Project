@@ -31,7 +31,7 @@ pipeline {
                 dir('C:/ProgramData/Jenkins/.jenkins/workspace/COMP367_FinalProject/server') {
                     bat 'npm install'
                 }
-                dir('C:\ProgramData\Jenkins\.jenkins\workspace\COMP367_FinalProject\react-client') {
+                dir('C:/ProgramData/Jenkins/.jenkins/workspace/COMP367_FinalProject/react-client') {
                     bat 'npm install'
                 }
             }
