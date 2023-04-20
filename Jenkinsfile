@@ -70,13 +70,15 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: credentialsId, passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                    bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
-                bat "docker push ${registry}/${image_name}:${env.BUILD_ID}"
+                script {
+                    bat "docker push ${registry}/${image_name}:${env.BUILD_ID}"
+                }
             }
         }
         stage('Deploy to Dev Env') {
