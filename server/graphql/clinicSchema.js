@@ -135,6 +135,9 @@ const alertType = new GraphQLObjectType({
       _id: {
         type: GraphQLID
       },
+      patient: {
+        type: userType,
+      },
       responderName: {
         type: GraphQLString
       },
@@ -218,11 +221,12 @@ const queryType = new GraphQLObjectType({
       alerts: {
         type: new GraphQLList(alertType),
         resolve: function () {
-          const alerts = AlertModel.find().exec()
+          const alerts = AlertModel.find().populate("user").exec();
+          console.log(alerts);
           if (!alerts) {
             throw new Error('Error')
           }
-          return alerts
+          return alerts;
         }
       },
       alert: {
@@ -607,10 +611,10 @@ const mutation = new GraphQLObjectType({
       createAlert: {
         type: alertType,
         args: {
+          patient: {type: new GraphQLNonNull(GraphQLString)},
           responderName: { type: GraphQLNonNull(GraphQLString) },
           email: { type: GraphQLNonNull(GraphQLString) },
           phoneNumber: { type: GraphQLNonNull(GraphQLString) },
-          patientName: { type: GraphQLNonNull(GraphQLString) },
           address: { type: GraphQLNonNull(GraphQLString) },
           message: { type: GraphQLNonNull(GraphQLString) },
         },
