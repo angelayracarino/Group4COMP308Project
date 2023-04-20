@@ -1,9 +1,8 @@
 FROM node:alpine
 
-WORKDIR /app
+WORKDIR /server
 
-COPY package.json ./server/package.json
-COPY package.json ./react-client/package.json
+COPY package.json .
 
 RUN npm install
 
