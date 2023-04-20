@@ -11,7 +11,7 @@ pipeline {
         }
     
         environment {
-            registry = "jane_apple"
+            registry = "janeapple"
             imageName = "comp367Project"
             imageTag = "latest"
         }
