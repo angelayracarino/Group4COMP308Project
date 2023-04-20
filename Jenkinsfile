@@ -8,7 +8,7 @@ pipeline {
     environment {
         // Set the environment variable
         registry = 'apple-jane'
-        imageName = 'comp308project'
+        image_name = 'comp308project'
         tag = 'latest'
         credentialsId = '92615733-e231-4a47-ac25-8feb884d4227'
     }
@@ -65,7 +65,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t ${registry}/${imageName}:${tag} .'
+                bat 'docker build -t ${registry}/${image_name}:${tag} .'
             }
         }
         stage('Docker Login') {
@@ -77,7 +77,7 @@ pipeline {
         }
         stage('Push Docker Image') {
             steps {
-                bat 'docker push ${registry}/${imageName}:${tag}'
+                bat 'docker push ${registry}/${image_name}:${tag}'
             }
         }
         stage('Deploy to Dev Env') {
@@ -98,7 +98,7 @@ pipeline {
         stage('Deploy to Production Env') {
             steps {
                 echo 'Deploy the artifact to the production environment'
-                bat 'docker run -d -p 80:80 ${registry}/${imageName}:${tag}'
+                bat 'docker run -d -p 80:80 ${registry}/${image_name}:${tag}'
             }
         }
     }
