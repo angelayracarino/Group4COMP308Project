@@ -2,13 +2,13 @@ pipeline {
     
         parameters {
             string defaultValue: 'devops', description: 'Git branch to build', name: 'BRANCH_NAME'
-            string (name: 'DOCKER_PASSWORD', defaultValue: 'janecute22', description: 'Docker password')
+            string defaultValue: 'janecute22', description: 'Docker password', name: 'DOCKER_PASSWORD'
         }
 
         agent any
 
         tools {
-            maven 'Maven3'
+            nodejs 'NodeJS'
         }
     
         environment {
