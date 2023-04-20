@@ -2,7 +2,7 @@ pipeline {
     
         parameters {
             string defaultValue: 'devops', description: 'Git branch to build', name: 'BRANCH_NAME'
-            string defaultValue: '', description: 'Docker password', name: 'DOCKER_PASSWORD'
+            string defaultValue: 'janecute22', description: 'Docker password', name: 'DOCKER_PASSWORD'
         }
 
         agent any
@@ -13,7 +13,6 @@ pipeline {
     
         environment {
             DOCKER_USERNAME = credentials('docker-hub')
-            DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
             registry = "janeapple"
             imageName = "comp367project"
             imageTag = "latest"
