@@ -21,17 +21,18 @@ pipeline {
                 git branch: "${params.BRANCH_NAME}", url: 'https://github.com/angelayracarino/Group4COMP308Project.git'
             }
         }
-    }
 
-    stage('Build') {
-        steps {
-            dir('/server/') {
-                bat 'npm install'
-            }
-            dir('/react-client/') {
-                bat 'npm install'
+        stage('Build') {
+            steps {
+                dir('/server/') {
+                    bat 'npm install'
+                }
+                dir('/react-client/') {
+                    bat 'npm install'
+                }
             }
         }
+
         stage('Test') {
             steps {
                 echo 'Running tests...'
