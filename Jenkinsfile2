@@ -2,7 +2,7 @@ pipeline {
     
         parameters {
             string defaultValue: 'devops', description: 'Git branch to build', name: 'BRANCH_NAME'
-            string defaultValue: 'jane22', description: 'Docker password', name: 'DOCKER_PASSWORD'
+            
         }
 
         agent any
@@ -12,7 +12,6 @@ pipeline {
         }
     
         environment {
-            DOCKER_USERNAME = credentials('comp367_ID')
             registry = "janeapple"
             imageName = "comp367project"
             imageTag = "latest"
@@ -51,7 +50,7 @@ pipeline {
             
             stage('Docker login'){
                 steps {
-                    withCredentials([usernamePassword(credentialsId: 'comp367_ID', passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                    withCredentials([usernamePassword(credentialsId: 'comp367_ID', passwordVariable: 'jane2231', usernameVariable: 'janecute22')]) {
                         bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD}"
                     }
                 }
@@ -59,7 +58,7 @@ pipeline {
             
             stage('Push Docker Image') {
                 steps {
-                    bat "docker push jane2231/comp367: ${registry}/${imageName}:${imageTag}"
+                    bat "docker push ${registry}/${imageName}:${imageTag}"
                 }
             }
 
