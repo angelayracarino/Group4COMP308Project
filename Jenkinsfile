@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         // Set the environment variable
-        registry = 'apple-jane'
+        registry = 'acduqu'
         image_name = 'hospital-project'
     }
 
