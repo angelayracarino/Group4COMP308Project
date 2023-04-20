@@ -65,19 +65,19 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t ${registry}/${image_name}:${tag} .'
+                bat "docker build -t ${registry}/${image_name}:${tag} ."
             }
         }
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(credentialsId: credentialsId, passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                bat 'docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD} ${registry}'
+                bat "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD} ${registry}"
                 }
             }
         }
         stage('Push Docker Image') {
             steps {
-                bat 'docker push ${registry}/${image_name}:${tag}'
+                bat "docker push ${registry}/${image_name}:${tag}"
             }
         }
         stage('Deploy to Dev Env') {
@@ -98,7 +98,7 @@ pipeline {
         stage('Deploy to Production Env') {
             steps {
                 echo 'Deploy the artifact to the production environment'
-                bat 'docker run -d -p 80:80 ${registry}/${image_name}:${tag}'
+                bat "docker run -d -p 80:80 ${registry}/${image_name}:${tag}"
             }
         }
     }
