@@ -2,7 +2,7 @@ pipeline {
     
         parameters {
             string defaultValue: 'devops', description: 'Git branch to build', name: 'BRANCH_NAME'
-            string defaultValue: 'janecute22', description: 'Docker password', name: 'DOCKER_PASSWORD'
+            string defaultValue: 'jane22', description: 'Docker password', name: 'DOCKER_PASSWORD'
         }
 
         agent any
@@ -12,7 +12,7 @@ pipeline {
         }
     
         environment {
-            DOCKER_USERNAME = credentials('docker-hub')
+            DOCKER_USERNAME = credentials('comp367_username')
             registry = "janeapple"
             imageName = "comp367project"
             imageTag = "latest"
@@ -51,7 +51,7 @@ pipeline {
             
             stage('Docker login'){
                 steps {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'jane2231', usernameVariable: 'janecute22')]) {
+                    withCredentials([usernamePassword(credentialsId: 'comp367_ID', passwordVariable: 'jane22', usernameVariable: 'comp367_username')]) {
                         bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD}"
                     }
                 }
