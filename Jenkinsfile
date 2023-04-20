@@ -12,6 +12,7 @@ pipeline {
     environment {
         registry = 'melanonuevo'
         imageName = 'comp367project'
+        imageTag = 'latest'
         prod = 'prod'
         dev = 'dev'
         qat = 'qat'
