@@ -66,16 +66,10 @@ pipeline {
                 bat "docker build -t ${registry}/${image_name}:${env.BUILD_ID} ."
             }
         }
-        stage('Docker Login') {
+        stage('Docker Login and Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: '92615733-e231-4a47-ac25-8feb884d4227', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
                     bat "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
-                }
-            }
-        }
-        stage('Push Docker Image') {
-            steps {
-                script {
                     bat "docker push ${registry}/${image_name}:${env.BUILD_ID}"
                 }
             }
