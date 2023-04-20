@@ -27,7 +27,6 @@ pipeline {
                 dir('/server/')
                 bat 'npm install'
             }
-            steps {
                 dir('/react-client/')
                 bat 'npm install'
             }
