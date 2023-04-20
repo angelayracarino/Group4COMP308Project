@@ -25,7 +25,7 @@ pipeline {
             steps {
                 dir('react-client') {
                     bat 'npm install'
-                    bat 'npm run build'
+                    //bat 'npm run build'
                 }
             }
         }
@@ -33,7 +33,7 @@ pipeline {
             steps {
                 dir('server') {
                     bat 'npm install'
-                    bat 'npm run build'
+                    //bat 'npm run build'
                 }
             }
         }
