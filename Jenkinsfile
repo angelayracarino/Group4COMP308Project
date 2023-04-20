@@ -23,7 +23,7 @@ pipeline {
         }
         stage('Build Client') {
             steps {
-                dir('../../react-client') {
+                dir('react-client') {
                     bat 'npm install'
                     bat 'npm run build'
                 }
@@ -31,7 +31,7 @@ pipeline {
         }
         stage('Build Server') {
             steps {
-                dir('../../server') {
+                dir('server') {
                     bat 'npm install'
                     bat 'npm run build'
                 }
@@ -39,23 +39,23 @@ pipeline {
         }
         stage('Test') {
             steps {
-                dir('../../server') {
+                dir('server') {
                     bat 'npm test'
                 }
-                dir('../../react-client') {
+                dir('react-client') {
                     bat 'npm test'
                 }
             }
         }
         stage('Deliver') {
             steps {
-                dir('../../server') {
+                dir('server') {
                     bat 'npm install'
                     bat 'npm run build'
                     bat 'npm run release'
                     //archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
                 }
-                dir('../../react-client') {
+                dir('react-client') {
                     bat 'npm install'
                     bat 'npm run build'
                     bat 'npm run release'
