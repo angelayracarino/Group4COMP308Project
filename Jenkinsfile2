@@ -11,6 +11,7 @@ pipeline {
         }
     
         environment {
+            DOCKER_USERNAME = credentials('docker-hub')
             registry = "janeapple"
             imageName = "comp367project"
             imageTag = "latest"
