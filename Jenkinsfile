@@ -52,14 +52,14 @@ pipeline {
                 dir('server') {
                     bat 'npm install'
                     echo 'npm run build'
-                    bat 'npm run release'
-                    //archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                    echo 'npm run release'
+                    archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
                 }
                 dir('react-client') {
                     bat 'npm install'
                     echo 'npm run build'
-                    bat 'npm run release'
-                    //archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                    echo 'npm run release'
+                    archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
                 }
             }
         }
