@@ -17,7 +17,7 @@ pipeline {
         //dev = 'dev'
         //qat = 'qat'
         //staging = 'staging'
-    }
+    } 
 
     stages {
         stage('Checkout') {
