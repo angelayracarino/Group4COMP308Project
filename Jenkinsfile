@@ -8,7 +8,7 @@ pipeline {
     environment {
         // Set the environment variable
         registry = 'apple-jane'
-        image_name = 'comp308project'
+        image_name = 'hospital-project'
         tag = 'latest'
         credentialsId = '92615733-e231-4a47-ac25-8feb884d4227'
     }
