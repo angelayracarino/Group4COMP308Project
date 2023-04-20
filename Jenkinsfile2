@@ -51,7 +51,7 @@ pipeline {
             
             stage('Docker login'){
                 steps {
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'jane2231', usernameVariable: 'janecute22')]) {
+                    withCredentials([usernamePassword(credentialsId: 'docker_hub', passwordVariable: 'jane2231', usernameVariable: 'janecute22')]) {
                         bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD}"
                     }
                 }
@@ -59,7 +59,7 @@ pipeline {
             
             stage('Push Docker Image') {
                 steps {
-                    bat "docker push ${registry}/${imageName}:${imageTag}"
+                    bat "docker push jane2231/comp367: ${registry}/${imageName}:${imageTag}"
                 }
             }
 
