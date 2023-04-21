@@ -138,13 +138,14 @@ function EditVital(props) {
                 patient: vital.patient
             }
         });
-        navigate('/vitals');
+        navigate('/');
     }
 
     const handleCancel = (event) => {
         event.preventDefault();
-        navigate('/vitals');
+        navigate('/');
     }
+    
 
     return (
         <div className="entryform">
