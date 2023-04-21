@@ -92,7 +92,7 @@ pipeline {
         stage('Deploy to Prod Env') {
             steps {
                 echo 'Deploying to Prod Env...'
-                echo 'Demo'
+                echo 'Demo COMP367'
                 bat "docker run -p 3000:3000 -d ${registry}/${imageName}:${imageTag}"
             }
         }
