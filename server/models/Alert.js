@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const AlertSchema = new Schema({
+    patient: {
+        type: Schema.ObjectId,
+        ref: "User",
+    },
     responderName: {
         type: String,
         required: true
@@ -12,10 +16,6 @@ const AlertSchema = new Schema({
         required: true
     },
     phoneNumber: {
-        type: String,
-        required: true
-    },
-    patientName: {
         type: String,
         required: true
     },

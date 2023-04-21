@@ -17,7 +17,6 @@ var GraphQLFloat = require('graphql').GraphQLFloat;
 
 
 // Models
-var User = require('../models/User');
 var AlertModel = require('../models/Alert');
 var SymptomModel = require('../models/Symptom');
 var TipModel = require('../models/Tip');
@@ -63,7 +62,7 @@ const userType = new GraphQLObjectType({
       province: {
         type: GraphQLString
       },
-      postalcode: {
+      postalCode: {
         type: GraphQLString
       },
       phone: {
@@ -136,6 +135,9 @@ const alertType = new GraphQLObjectType({
       _id: {
         type: GraphQLID
       },
+      patient: {
+        type: userType,
+      },
       responderName: {
         type: GraphQLString
       },
@@ -170,7 +172,40 @@ const symptomsType = new GraphQLObjectType({
   }
 });
 
+//Create a graphql Object Type for payload
+const PayloadType = new GraphQLObjectType({
+  name: 'Payload',
+  fields: () => ({
+      _id: { type: GraphQLID},
+      email: { type: GraphQLString },
+      role: { type: GraphQLString },
+      token: { type: GraphQLString }
+  })
+});
 
+const ClearCookieToken = (context) => {
+  context.res.clearCookie('token');
+};
+
+const GetPayloadFromCookies = async (context) => {
+  if (!context.req.cookies.token) {
+      throw new Error('Error retrieving token from cookie');
+  }
+  var payload;
+  try {
+      payload = jwt.verify(context.req.cookies.token, JWT_SECRET);
+  }
+  catch (error){
+      if (error instanceof jwt.JsonWebTokenError) {
+          throw new Error('Json Web Token Error');
+      }
+      else
+      {
+          throw new Error('Error verifying token');
+      }
+  }
+  return payload;
+}
 
 
 // Create a GraphQL query type that returns a student by id
@@ -186,11 +221,12 @@ const queryType = new GraphQLObjectType({
       alerts: {
         type: new GraphQLList(alertType),
         resolve: function () {
-          const alerts = AlertModel.find().exec()
+          const alerts = AlertModel.find().populate("user").exec();
+          console.log(alerts);
           if (!alerts) {
             throw new Error('Error')
           }
-          return alerts
+          return alerts;
         }
       },
       alert: {
@@ -282,11 +318,11 @@ const queryType = new GraphQLObjectType({
         users: {
           type: new GraphQLList(userType),
           resolve: function () {
-            const users = User.find().exec()
+            const users = UserModel.find().exec()
             if (!users) {
               throw new Error('Error')
             }
-            return users
+            return users;
           }
         },
         user: {
@@ -298,105 +334,59 @@ const queryType = new GraphQLObjectType({
             }
           },
           resolve: function (root, params) {
-            const userInfo = User.findById(params.id).exec()
+            const userInfo = UserModel.findById(params.id).exec()
             if (!userInfo) {
-              throw new Error('Error')
+              throw new Error('Cannot find user')
             }
-            return userInfo
+            return userInfo;
           }
         },
-        // check if user is logged in
-        isLoggedIn: {
-          type: GraphQLString,
-          args: {
-            email: {
-              name: 'email',
-              type: GraphQLString
+        nurses:{
+            type: new GraphQLList(userType),
+            resolve: async function () {
+                const nurses = await UserModel.find({role: 'nurse'})
+                if (!nurses) {
+                  throw new Error('Error locating role for user')
+                }
+                return nurses;
             }
-
-          },
-          resolve: async function (root, params, context) {
-            //
-            console.log(params)
-            console.log('in isLoggedIn.....')
-            console.log(context.req.cookies['token'])
-            console.log('token: ')
-            //
-            // Obtain the session token from the requests cookies,
-            // which come with every request
-            const token = context.req.cookies.token
-            console.log('token from request: ', token)
-            // if the cookie is not set, return 'auth'
-            if (!token) {
-              console.log('no token, so return auth')
-              return 'auth';
-            }
-            var payload;
-            try {
-              // Parse the JWT string and store the result in payload.
-              // Note that we are passing the key in this method as well. 
-              // This method will throw an error
-              // if the token is invalid (if it has expired according to the expiry time
-              //  we set on sign in), or if the signature does not match
-              const payload = jwt.verify(token, JWT_SECRET)
-              const user = await User.findOne({ email: payload.email });
-              return user.role;
-            } catch (e) {
-              if (e instanceof jwt.JsonWebTokenError) {
-                // the JWT is unauthorized, return a 401 error
-                console.log('jwt error')
-                return context.res.status(401).end()
-              }
-              // otherwise, return a bad request error
-              console.log('bad request error')
-              return context.res.status(400).end()
-            }
-            console.log('email from payload: ', payload.email)
-            // Finally, token is ok, return the email given in the token
-            // res.status(200).send({ screen: payload.email });
-            return payload.email;
-
-          }
         },
-        checkUserRole: {
-          type: GraphQLString,
-          resolve: async function (root, params, context) {
-            const token = context.req.cookies.token;
-            if (!token) {
-              return 'auth';
+        patients:{
+            type: new GraphQLList(userType),
+            resolve: async function () {
+                const patients = await UserModel.find({role: 'patient'});
+                if (!patients) {
+                  throw new Error('Error locating role for patient')
+                }
+                return patients;
             }
-            try {
-              const payload = jwt.verify(token, JWT_SECRET);
-              const user = await User.findOne({ email: payload.email });
-              return user.role;
-            } catch (err) {
-              console.error(err);
-              return 'auth';
-            }
-          }
         },
-        redirectToPage: {
-          type: GraphQLString,
-          resolve: async function (root, params, context) {
-            const token = context.req.cookies.token;
-            if (!token) {
-              return 'auth';
+        patient: {
+            type: userType,
+            args: {
+                id: {
+                    name: '_id',
+                    type: GraphQLString
+                }
+            },
+            resolve: async function (root, params) {
+                const patientInfo = await UserModel.findById(params.id);
+                if (!patientInfo){
+                    throw new Error('Cannot find patient');
+                }
+                return patientInfo;
             }
-            try {
-              const payload = jwt.verify(token, JWT_SECRET);
-              const user = await UserModel.findOne({ email: payload.email });
-              if (user.role === 'patient') {
-                return '/patient-page';
-              } else if (user.role === 'nurse') {
-                return '/nurse-page';
-              } else {
-                return '/login';
-              }
-            } catch (err) {
-              console.error(err);
-              return 'auth';
+        },
+        payload: {
+            type: PayloadType,
+            resolve: async function (root, params, context) {
+                try {
+                    return await GetPayloadFromCookies(context);
+                }
+                catch (error) {
+                    throw new Error(error);
+                }
             }
-          }
         }
       }
     }
@@ -419,24 +409,24 @@ const mutation = new GraphQLObjectType({
           address: { type: GraphQLNonNull(GraphQLString) },
           city: { type: GraphQLNonNull(GraphQLString) },
           province: { type: GraphQLNonNull(GraphQLString) },
-          postalcode: { type: GraphQLNonNull(GraphQLString) },
+          postalCode: { type: GraphQLNonNull(GraphQLString) },
           phone: { type: GraphQLNonNull(GraphQLString) },
           role: { type: GraphQLNonNull(GraphQLString) },
         },
-        resolve: function (root, params, context) {
-          const userModel = new User(params);
+        resolve: async function (root, params) {
+          const userModel = new UserModel(params);
           const newUser = userModel.save();
           if (!newUser) {
-            throw new Error('Error');
+            throw new Error('User Not Added!!');
           }
-          return newUser
+          return newUser;
         }
       },
 
-      // a mutation to log in the student
+      // a mutation to log in the user
       loginUser:
       {
-        type: GraphQLString,
+        type: PayloadType,
         args: {
           email: {
             name: 'email',
@@ -451,46 +441,64 @@ const mutation = new GraphQLObjectType({
         resolve: async function (root, params, context) {
           console.log('email:', params.email)
           // find the student with email if exists
-          const userInfo = await User.findOne({ email: params.email }).exec()
+          const userInfo = await UserModel.findOne({ email: params.email }).exec()
           console.log(userInfo)
           if (!userInfo) {
-            throw new Error('Error - student not found')
+            throw new Error('Error - user not found')
           }
-          console.log('email:', userInfo.email)
-          console.log('entered pass: ', params.password)
-          console.log('hash', userInfo.password)
-          // check if the password is correct
-          const isValidPassword = await bcrypt.compare(params.password, userInfo.password);
-          if (!isValidPassword) {
-            return 'auth';
-            //throw new Error('Invalid login credentials');
+          else{
+            console.log(userInfo.password)
+            // check if the password is correct
+            const isMatched = await bcrypt.compare(params.password, userInfo.password);
+            console.log(isMatched + ": |" + params.password + "| vs |" + userInfo.password + "|")
+            console.log(params.password == userInfo.password)
+            console.log(params.password === userInfo.password)
+
+            if (!isMatched) {
+              throw new Error('Incorrect password')
+            }
+            else {
+              // sign the given payload (arguments of sign method) into a JSON Web Token 
+              // and which expires 300 seconds after issue
+              const token = jwt.sign({ _id: userInfo._id, email: userInfo.email, role: userInfo.role }, JWT_SECRET,
+                { algorithm: 'HS256', expiresIn: jwtExpirySeconds });
+              console.log('registered token:', token)
+
+              // set the cookie as the token string, with a similar max age as the token
+            // here, the max age is in milliseconds
+            context.res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000, httpOnly: true });
+            console.log('cookie set with:', userInfo.email)
+            const payload = {
+              _id: userInfo._id,
+              email: userInfo.email,
+              role: userInfo.role,
+              token: token,
+            }
+            console.log(payload);
+            return payload;
+            }
           }
-          console.log('password is valid')
-          console.log('password matches')
-          console.log('email:', userInfo.email)
-          console.log('Object id of user:', userInfo._id);
-          // sign the given payload (arguments of sign method) into a JSON Web Token 
-          // and which expires 300 seconds after issue
-          const token = jwt.sign({ _id: userInfo._id, email: userInfo.email }, JWT_SECRET,
-            { algorithm: 'HS256', expiresIn: jwtExpirySeconds });
-          console.log('registered token:', token)
-
-          // set the cookie as the token string, with a similar max age as the token
-          // here, the max age is in milliseconds
-          context.res.cookie('token', token, { maxAge: jwtExpirySeconds * 1000, httpOnly: true });
-          console.log('cookie set with:', userInfo.email)
-          //context.res.status(200).send({ screen: userInfo.firstname });
-          return userInfo.email;
-
         } //end of resolver function
       },
       // a mutation to log the student out
       logOut: {
         type: GraphQLString,
-        resolve: (parent, args, { res }) => {
-          res.clearCookie('token');
-          return 'Logged out successfully!';
-        },
+                resolve: async (root, params, context) => {
+                    if (context.req.cookies.token !== undefined) {
+                        try {
+                            const payload = await GetPayloadFromCookies(context);
+                            // clear cookie
+                            ClearCookieToken(context);
+                            return payload.email;
+                        }
+                        catch (error) {
+                            throw new Error(error);
+                        }
+                    }
+                    else{
+                        return 'Already logged out'
+                    }
+                }
       },
       //
       createVital: {
@@ -544,23 +552,6 @@ const mutation = new GraphQLObjectType({
               throw new Error('Error')
             }
             return updateVital;
-          } catch (err) {
-            console.log(err)
-          }
-        }
-      },
-      deleteVital: {
-        type: vitalType,
-        args: {
-          id: { type: GraphQLNonNull(GraphQLString) },
-        },
-        resolve: function (root, params, context) {
-          try {
-            const deleteVital = VitalModel.findByIdAndRemove(params.id).exec();
-            if (!deleteVital) {
-              throw new Error('Error')
-            }
-            return deleteVital;
           } catch (err) {
             console.log(err)
           }
@@ -620,10 +611,10 @@ const mutation = new GraphQLObjectType({
       createAlert: {
         type: alertType,
         args: {
+          patient: {type: new GraphQLNonNull(GraphQLString)},
           responderName: { type: GraphQLNonNull(GraphQLString) },
           email: { type: GraphQLNonNull(GraphQLString) },
           phoneNumber: { type: GraphQLNonNull(GraphQLString) },
-          patientName: { type: GraphQLNonNull(GraphQLString) },
           address: { type: GraphQLNonNull(GraphQLString) },
           message: { type: GraphQLNonNull(GraphQLString) },
         },
