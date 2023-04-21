@@ -44,6 +44,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  
+}
+
+.exercise-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
 .game {
@@ -77,4 +86,124 @@
 .total-exercises {
   font-size: 18px;
   margin-bottom: 1rem;
+}
+
+.jumbotron {
+  background: rgba(0, 0, 0, .5) url('../public/banner1.jpg');
+  color: #fff;
+  background-size: cover;
+  padding-top: 80px;
+  padding-bottom: 130px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-blend-mode: darken;
+  width: auto;
+  height: 670px;
+  margin: 0;
+}
+
+
+
+.jumbotron-login {
+ 
+  color: #fff;
+  background-size: cover;
+  background-blend-mode: darken;
+  width: auto;
+  height: 650px;
+  margin: 50px;
+}
+
+.footer {
+  margin-top: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  color: white;
+  justify-content: center;
+  align-items: center;
+  border-top: rgb(221, 221, 221) solid 0.5px;
+  border-bottom: rgb(221, 221, 221) solid 0.5px;
+  background-color: #d7baad;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 10px;
+}
+
+.navbar {
+  background-color: #d7baad;
+  color: #00007a;
+}
+
+.button {
+  background-color: #d7baad;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+h1 {
+  color: white;
+  text-size-adjust: 100%;
+}
+
+.ml-auto{
+  font-size: 15px white;
+}
+
+.column {
+  float: left;;
+}
+
+.carousel1{
+  width: 610px;
+  height: 290px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.carousel2{
+  width: 900px;
+  height: 290px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.fit1 {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.img-style{
+  width: 30%;
+  height: 0%;
+  margin-bottom: 1px;
+}
+
+.user{
+  width: 70%;
+  height: 30%;
+  align-items: center;
+  margin-left: 50px;
+}
+
+.banner2{
+  width: 40%;
+  height: 40%;
+  padding-top: 50px;
+  position: relative;
+  margin-left: 150px;
+
 }

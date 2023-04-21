@@ -7,6 +7,8 @@
     "@apollo/react-hooks": "^4.0.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@fortawesome/free-solid-svg-icons": "^6.4.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@mui/material": "^5.12.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -34,6 +36,7 @@
       "react-app/jest"
     ]
   },
+  "proxy": "http://localhost:4000/",
   "browserslist": {
     "production": [
       ">0.2%",
