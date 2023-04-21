@@ -30,7 +30,14 @@ import CreateAlert from './components/CreateAlert';
 import AlertList from './components/AlertList';
 import Game from './components/Game';
 import CreateSymptom from './components/CreateSymptom';
+<<<<<<< Updated upstream
 
+=======
+import { useAuthToken,
+  useAuthUserToken,
+  useAuthRole,
+  useLogout} from "./auth/auth";
+>>>>>>> Stashed changes
 //
 function App() {
 
@@ -43,6 +50,7 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav className="ml-auto">
+<<<<<<< Updated upstream
               {/* <Nav.Link as={Link} to="/register">Register</Nav.Link> */}
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
               <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
@@ -53,6 +61,37 @@ function App() {
               <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
               <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
               <Nav.Link as ={Link} to="/add-symptom">Create Symptom</Nav.Link>
+=======
+              <Nav.Link as={Link} to="/home" >Home</Nav.Link>
+              {
+                  !isLoggedIn() ?
+                  <Fragment>
+                    <Nav.Link as={Link} to="/register">Register</Nav.Link>
+                    <Nav.Link as={Link} to="/login">Login</Nav.Link>
+                  </Fragment>
+                  :
+                  <Fragment>
+                    { isNurse() ?
+                      <Fragment>
+                        <Nav.Link as={Link} to="/patients">Patients</Nav.Link>
+                        <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
+                        <Nav.Link as={Link} to="/add-tip">Create Tip</Nav.Link>
+                        <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
+                        <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
+                      </Fragment>
+                        :
+                      <Fragment>
+                        <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
+                        <Nav.Link as={Link} to="/add-symptom">Create Symptom</Nav.Link>
+                        <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
+                        <Nav.Link as={Link} to="/tips">Tip List</Nav.Link>
+                        <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
+                      </Fragment>
+                    }
+                      <div className={`nav-link`} style={{ cursor: "pointer" }} onClick={() => logout()}> Logout {user_email} ({user_role}) </div>
+                  </Fragment>
+              }
+>>>>>>> Stashed changes
             </Nav>
           </Navbar.Collapse>
         </Container>
@@ -64,6 +103,7 @@ function App() {
           {/* <Route path="/register" element={<Register />} /> */}
           <Route path="/add-vitals" element={<CreateVital />} />
           <Route path="/vitals" element={<VitalList />} />
+          <Route path="/add-symptom" element={<CreateSymptom />} />
           <Route path="/edit-vital/:id" element={<EditVital />} />
           <Route path="/add-tip" element={<CreateTip />} />
           <Route path="/tips" element={<TipList />} />
