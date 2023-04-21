@@ -61,44 +61,44 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
                 bat "docker build -t ${registry}/${image_name}:${env.BUILD_ID} ."
             }
         }
-        stage('Docker Login') {
+        stage('Login Docker') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
                     bat "docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD"
                 }
             }
         }
-        stage('Push Docker Image') {
+        stage('Push Image') {
             steps {
                 script {
                     bat "docker push ${registry}/${image_name}:${env.BUILD_ID}"
                 }
             }
         }
-        stage('Deploy to Dev Env') {
+        stage('Dev Env') {
             steps {
                 echo 'Name the dev environment'
                 echo 'Deploy the artifact to the dev environment'
             }
         }
-        stage('Deploy to QAT Env') {
+        stage('QAT Env') {
             steps {
                 echo 'Name the QAT environment'
                 echo 'Deploy the artifact to the QAT environment'
             }
         }
-        stage('Deploy to Staging Env') {
+        stage('Staging Env') {
             steps {
                 echo 'Name the staging environment'
                 echo 'Deploy the artifact to the staging environment'
             }
         }
-        stage('Deploy to Production Env') {
+        stage('Production Env') {
             steps {
                 echo 'Name the production environment'
                 echo 'Deploy the artifact to the production environment'
