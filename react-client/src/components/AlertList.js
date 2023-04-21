@@ -70,12 +70,9 @@ function AlertList() {
 
 
     return (
+        <Container>
         <div>    
         {content && authRole === "nurse" ? (
-
-    return (    
-        <Container>
-
         <div className="alertList">
             <h1>Alert List</h1>
             <Table striped bordered hover>

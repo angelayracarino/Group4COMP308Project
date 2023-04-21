@@ -29,7 +29,6 @@ import EditTip from './components/EditTip';
 import CreateAlert from './components/CreateAlert';
 import AlertList from './components/AlertList';
 import Game from './components/Game';
-
 import CreateSymptom from './components/CreateSymptom';
 
 
@@ -134,7 +133,7 @@ function App() {
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav className="ml-auto">
 
-              {/* <Nav.Link as={Link} to="/register">Register</Nav.Link> */}
+              {/* <Nav.Link as={Link} to="/register">Register</Nav.Link>
               <Nav.Link as={Link} to="/login">Login</Nav.Link>
               <Nav.Link as={Link} to="/add-vitals">Create Vitals</Nav.Link>
               <Nav.Link as={Link} to="/vitals">Vitals</Nav.Link>
@@ -143,7 +142,7 @@ function App() {
               <Nav.Link as={Link} to="/add-alert">Create Alert</Nav.Link>
               <Nav.Link as={Link} to="/alerts">Alert List</Nav.Link>
               <Nav.Link as={Link} to="/fitness">Fitness</Nav.Link>
-              <Nav.Link as ={Link} to="/add-symptom">Create Symptom</Nav.Link>
+              <Nav.Link as ={Link} to="/add-symptom">Create Symptom</Nav.Link> */}
 
               <Nav.Link as={Link} to="/home" >Home</Nav.Link>
               {
