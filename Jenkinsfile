@@ -102,7 +102,7 @@ pipeline {
             steps {
                 echo 'Name the production environment'
                 echo 'Deploy the artifact to the production environment'
-                echo "docker run -d -p 8083:8083 ${registry}/${image_name}:${env.BUILD_ID}"
+                bat "docker run -d -p 8083:8083 ${registry}/${image_name}:${env.BUILD_ID}"
                 echo 'demo'
             }
         }
