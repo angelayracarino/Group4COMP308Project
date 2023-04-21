@@ -15,8 +15,7 @@ pipeline {
         //qat = 'qat'
         //staging = 'staging'
     }
-    } 
-
+    
     stages {
         stage('Checkout') {
             steps {
@@ -36,7 +35,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Running tests...'
-            // Add your test commands here
+                // Add your test commands here
             }
         }
         stage('Deliver') {
@@ -75,19 +74,19 @@ pipeline {
         stage('Deploy to Dev Env') {
             steps {
                 echo 'Deploying to Dev Env...'
-             //bat "docker run -p 5000:5000 -d ${registry}/${imageName}:${dev}"
+                //bat "docker run -p 5000:5000 -d ${registry}/${imageName}:${dev}"
             }
         }
         stage('Deploy to QAT Env') {
             steps {
                 echo 'Deploying to QAT Env...'
-             //bat "docker run -p 4000:4000 -d ${registry}/${imageName}:${qat}"
+                //bat "docker run -p 4000:4000 -d ${registry}/${imageName}:${qat}"
             }
         }
         stage('Deploy to Staging Env') {
             steps {
                 echo 'Deploying to Staging Env...'
-             //bat "docker run -p 3000:3001 -d ${registry}/${imageName}:${staging}"
+                //bat "docker run -p 3000:3001 -d ${registry}/${imageName}:${staging}"
             }
         }
         stage('Deploy to Prod Env') {
