@@ -44,13 +44,13 @@ pipeline {
                     bat 'npm install'
                     echo 'npm run build'
                     echo 'npm run release'
-                    archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                    archiveArtifacts artifacts: '**', allowEmptyArchive: true
                 }
                 dir('react-client') {
                     bat 'npm install'
                     echo 'npm run build'
                     echo 'npm run release'
-                    archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                    archiveArtifacts artifacts: '**', allowEmptyArchive: true
                 }
             }
         }
