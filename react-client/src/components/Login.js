@@ -28,11 +28,8 @@ function Login() {
   const [loginUser, { data, loading, error }] = useMutation(LOGIN_USER);
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
- 
-const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    //const { login } = useContext(UserContext);
+
+  
 
   const [_, setAuthToken, removeAuthtoken] = useAuthToken();
   const [__, setAuthUserToken, removeAuthUsertoken] = useAuthUserToken();
