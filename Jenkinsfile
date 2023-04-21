@@ -19,14 +19,6 @@ pipeline {
                 git branch: 'devops', url: 'https://github.com/angelayracarino/Group4COMP308Project'
             }
         }
-        stage('Build Client') {
-            steps {
-                dir('react-client') {
-                    bat 'npm install'
-                    echo 'npm run build'
-                }
-            }
-        }
         stage('Build Server') {
             steps {
                 dir('server') {
@@ -40,20 +32,11 @@ pipeline {
                 dir('server') {
                     echo 'npm test'
                 }
-                dir('react-client') {
-                    echo 'npm test'
-                }
             }
         }
         stage('Deliver') {
             steps {
                 dir('server') {
-                    bat 'npm install'
-                    echo 'npm run build'
-                    echo 'npm run release'
-                    archiveArtifacts artifacts: '**', allowEmptyArchive: true
-                }
-                dir('react-client') {
                     bat 'npm install'
                     echo 'npm run build'
                     echo 'npm run release'
